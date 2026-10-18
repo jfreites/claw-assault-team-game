@@ -22,3 +22,5 @@ extends Resource
 @export var hurt_knockback := Vector2(-70, -220)
 @export var dead_time := 1.2
 @export var respawn_invulnerability := 2.0
+## Invulnerabilidad breve cuando el escudo absorbe un golpe
+@export var shield_break_invulnerability := 1.0

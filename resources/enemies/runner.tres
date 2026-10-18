@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy_stats.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/powerups/catnip.tres" id="2_catnip"]
+[ext_resource type="Resource" path="res://resources/powerups/milk.tres" id="3_milk"]
 
 [resource]
 script = ExtResource("1_script")
@@ -9,3 +11,5 @@ contact_damage = 1
 score = 100
 move_speed = 65.0
 think_interval = 1.5
+drop_chance = 0.1
+drop_table = Array[Resource]([ExtResource("2_catnip"), ExtResource("3_milk")])

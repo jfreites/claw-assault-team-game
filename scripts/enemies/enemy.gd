@@ -127,9 +127,9 @@ func _on_hurtbox_hurt(damage: int, _source: Hitbox) -> void:
 
 
 func _try_drop() -> void:
-	# Los pickups llegan en la etapa 4; aquí solo se decide si hay drop
 	if stats.drop_table.is_empty() or randf() > stats.drop_chance:
 		return
+	Pickup.spawn(self, stats.drop_table.pick_random(), global_position + _center_offset())
 
 
 func _check_despawn() -> void:

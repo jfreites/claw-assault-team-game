@@ -9,6 +9,7 @@
 [ext_resource type="Resource" path="res://resources/weapons/yarn.tres" id="7_yarn"]
 [ext_resource type="Resource" path="res://resources/weapons/fishbone.tres" id="8_fishbone"]
 [ext_resource type="Resource" path="res://resources/weapons/sardine_spread.tres" id="9_sardine"]
+[ext_resource type="Script" path="res://scripts/powerups/power_up_controller.gd" id="10_powers"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(12, 24)
@@ -78,3 +79,12 @@ position = Vector2(0, -14)
 script = ExtResource("5_holder")
 default_weapon = ExtResource("6_hairball")
 debug_weapons = Array[Resource]([ExtResource("6_hairball"), ExtResource("7_yarn"), ExtResource("8_fishbone"), ExtResource("9_sardine")])
+
+[node name="PowerUps" type="Node" parent="."]
+script = ExtResource("10_powers")
+
+[node name="ShieldSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -13)
+script = ExtResource("3_sprite")
+entity = "fx/shield"

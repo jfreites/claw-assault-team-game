@@ -8,6 +8,7 @@ script = ExtResource("1_weapon")
 bullet_scene = ExtResource("2_bullet")
 display_name = "Estambre"
 hud_letter = "E"
+pickup_sprite = "pickups/weapon_yarn"
 pattern = 2
 fire_rate = 3.5
 damage = 2

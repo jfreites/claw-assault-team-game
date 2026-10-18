@@ -47,6 +47,40 @@ const ENTITIES := {
 		"size": Vector2i(28, 18), "anchor": "center", "color": "3fbfbf", "label": "F", "default": "fly",
 		"anims": {"fly": {"frames": 2, "fps": 8.0, "loop": true, "shape": "wing"}},
 	},
+	# --- Pickups (anclaje al centro) y cápsula ---
+	"pickups/capsule": {
+		"size": Vector2i(26, 16), "anchor": "center", "color": "d0d0d8", "label": "C", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 8.0, "loop": true, "shape": "wing"}},
+	},
+	"pickups/weapon_hairball": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "c08a5a", "label": "H", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	"pickups/weapon_yarn": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "ff5fc0", "label": "E", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	"pickups/weapon_fishbone": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "b8c4ff", "label": "P", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	"pickups/weapon_sardine": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "5fa8ff", "label": "S", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	"pickups/power_catnip": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "7fd34e", "label": "N", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	"pickups/power_milk": {
+		"size": Vector2i(16, 14), "anchor": "center", "color": "f4f4f4", "label": "L", "default": "idle",
+		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
+	},
+	# --- Efectos ---
+	"fx/shield": {
+		"size": Vector2i(32, 32), "anchor": "center", "color": "ffe066", "default": "idle",
+		"anims": {"idle": {"frames": 4, "fps": 10.0, "loop": true, "shape": "ring"}},
+	},
 	# --- Proyectiles (anclaje al centro, animación "fly") ---
 	"projectiles/hairball": {
 		"size": Vector2i(6, 6), "anchor": "center", "color": "c08a5a", "default": "fly",

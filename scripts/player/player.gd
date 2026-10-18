@@ -13,6 +13,7 @@ enum State { IDLE, RUN, JUMP, FALL, PRONE, HURT, DEAD }
 ## Multiplicadores que modifican los poderes temporales
 var speed_multiplier := 1.0
 var jump_multiplier := 1.0
+var extra_air_jumps := 0
 
 var state: State = State.IDLE
 var facing := 1
@@ -25,6 +26,7 @@ var _jump_buffer := 0.0
 var _drop_time := 0.0
 var _invulnerable := 0.0
 var _jumped := false
+var _air_jumps_used := 0
 var _died_emitted := false
 
 @onready var sprite: EntitySprite = $Sprite
@@ -33,6 +35,8 @@ var _died_emitted := false
 @onready var hurt_prone: CollisionShape2D = $Hurtbox/Prone
 @onready var muzzles: Node2D = $Muzzles
 @onready var weapon_holder: WeaponHolder = $WeaponHolder
+@onready var powers: PowerUpController = $PowerUps
+@onready var shield_sprite: EntitySprite = $ShieldSprite
 
 
 func _ready() -> void:
@@ -67,6 +71,7 @@ func _physics_control(delta: float) -> void:
 
 	if on_floor:
 		_coyote = config.coyote_time
+		_air_jumps_used = 0
 	if _just_pressed("jump"):
 		_jump_buffer = config.jump_buffer_time
 
@@ -77,6 +82,9 @@ func _physics_control(delta: float) -> void:
 		if on_floor and down and _standing_on_one_way():
 			_start_drop()
 		elif _coyote > 0.0:
+			_do_jump()
+		elif _air_jumps_used < extra_air_jumps:
+			_air_jumps_used += 1
 			_do_jump()
 	# Salto variable: soltar el botón corta la subida
 	if _just_released("jump") and _jumped and velocity.y < 0.0:
@@ -156,6 +164,11 @@ func _on_hurtbox_hurt(_damage: int, source: Hitbox) -> void:
 	var lethal := source != null and source.instant_kill
 	if not lethal and _invulnerable > 0.0:
 		return
+	# Escudo (leche): absorbe el golpe y da un respiro
+	if not lethal and powers.absorb_hit():
+		start_invulnerability(config.shield_break_invulnerability)
+		GameCamera.shake_current(self, 2.0, 0.15)
+		return
 	kill(lethal)
 
 
@@ -164,6 +177,7 @@ func kill(instant := false) -> void:
 	if not is_alive():
 		return
 	hurtbox.active = false
+	powers.clear()
 	AudioManager.play_sfx("player_hurt")
 	GameCamera.shake_current(self, 3.0, 0.25)
 	if instant:
@@ -188,6 +202,15 @@ func _physics_dead(delta: float) -> void:
 	if not _died_emitted and _state_time >= config.dead_time:
 		_died_emitted = true
 		died.emit()
+
+
+## Aplica el contenido de un pickup: arma nueva o poder temporal
+func collect(item: Resource) -> void:
+	if item is WeaponData:
+		weapon_holder.equip(item)
+		AudioManager.play_sfx("pickup_weapon")
+	elif item is PowerUpData:
+		powers.activate(item)
 
 
 func start_invulnerability(duration := -1.0) -> void:
@@ -267,6 +290,7 @@ func _update_visuals() -> void:
 			sprite.play_safe(&"hurt", &"jump")
 		State.DEAD:
 			sprite.play_safe(&"dead", &"prone")
+	shield_sprite.visible = powers.shield_hits > 0 and is_alive()
 	# Parpadeo durante la invulnerabilidad
 	sprite.visible = _invulnerable <= 0.0 or int(_invulnerable * 20.0) % 2 == 0
 

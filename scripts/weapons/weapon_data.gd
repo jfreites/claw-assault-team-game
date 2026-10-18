@@ -8,6 +8,8 @@ enum Pattern { SINGLE, SPREAD, BOUNCE, PIERCE }
 ## Letra corta para el HUD y los pickups
 @export var hud_letter := "H"
 @export var pattern: Pattern = Pattern.SINGLE
+## Carpeta del sprite del pickup relativa a assets/sprites
+@export var pickup_sprite := "pickups/weapon_hairball"
 
 @export_group("Disparo")
 ## Disparos por segundo manteniendo el botón

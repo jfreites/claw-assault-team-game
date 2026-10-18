@@ -4,21 +4,31 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/runner.tscn" id="2_runner"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/turret.tscn" id="3_turret"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/flyer.tscn" id="4_flyer"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/capsule_catnip.tscn" id="5_cap_catnip"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/capsule_yarn.tscn" id="6_cap_yarn"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/capsule_fishbone.tscn" id="7_cap_fishbone"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/capsule_milk.tscn" id="8_cap_milk"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/capsule_spread.tscn" id="9_cap_spread"]
 
 [resource]
 script = ExtResource("1_layout")
 tile_size = 16
 spawns = {
+"B": ExtResource("7_cap_fishbone"),
 "F": ExtResource("4_flyer"),
+"M": ExtResource("8_cap_milk"),
+"N": ExtResource("5_cap_catnip"),
 "R": ExtResource("2_runner"),
-"T": ExtResource("3_turret")
+"S": ExtResource("9_cap_spread"),
+"T": ExtResource("3_turret"),
+"Y": ExtResource("6_cap_yarn")
 }
 map = "..............................................................................................................................##
 ..............................................................................................................................##
 ..............................................................................................................................##
 ......................................................F.....................................................F.................##
-............................................F.................................................................................##
-..............................................................................................................................##
+............................................F.................Y.....................B.................................S.......##
+..............................N.....................................................................M.........................##
 ..............................................................................................................................##
 ................................................................................................................T.............##
 ..............R.........................................................................T.....................=====...........##

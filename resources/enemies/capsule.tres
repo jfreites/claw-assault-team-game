@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_stats.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+max_health = 1
+contact_damage = 0
+score = 500
+move_speed = 55.0
+wave_amplitude = 14.0
+wave_frequency = 0.6

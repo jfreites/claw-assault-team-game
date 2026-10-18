@@ -2,7 +2,7 @@
 
 Vertical slice de un run & gun 2D estilo Contra protagonizado por un gato guerrero. Godot 4.3+ (probado con 4.7.2), solo GDScript, sin plugins.
 
-> Estado: etapas 1–3 (jugador, armas, enemigos) en un nivel de prueba. Pickups, nivel 1, jefe y pulido llegan en las siguientes etapas.
+> Estado: etapas 1–4 (jugador, armas, enemigos, pickups y poderes) en un nivel de prueba. Nivel 1, jefe y pulido llegan en las siguientes etapas.
 
 ## Ejecutar
 
@@ -30,6 +30,8 @@ La escena principal es `scenes/levels/test_range.tscn`.
 - Abajo recto solo dispara hacia abajo en el aire; en el suelo te echas (hurtbox más bajo).
 - Mantén *fijar dirección* para caminar sin cambiar hacia dónde disparas.
 - Un golpe = una vida. Con 3 vidas; al perder una reapareces en el último checkpoint.
+- Dispara a las cápsulas voladoras para que suelten un arma o un poder; tócalo para recogerlo.
+- Poderes: **Catnip** (más velocidad y cadencia, 10 s) y **Leche** (escudo que absorbe un golpe, 20 s). El HUD muestra el tiempo restante.
 
 ## Herramientas
 
@@ -42,7 +44,7 @@ godot --headless --path . --script res://tools/generate_placeholders.gd -- --for
 godot --headless --path . --import
 # Reescribir el Input Map (teclado + gamepad) en project.godot
 godot --headless --path . --script res://tools/setup_input_map.gd
-# Prueba automática de movimiento, armas y enemigos
+# Prueba automática de movimiento, armas, enemigos, pickups y poderes
 godot --headless --path . res://tools/smoke_test.tscn
 ```
 
@@ -59,11 +61,13 @@ Para reemplazar arte, ver [ASSETS.md](ASSETS.md).
 4. Agrega su entrada al catálogo de sprites y regenera placeholders.
 5. Para colocarlo en un nivel, asígnale un carácter en `spawns` del `LevelLayout` y úsalo en el mapa ASCII.
 
-**Un poder**: *(etapa 4)*.
+**Un poder**: crea un `.tres` en `resources/powerups/` con script `PowerUpData` y ajusta `duration` y los modificadores (`speed_multiplier`, `fire_rate_multiplier`, `jump_multiplier`, `damage_multiplier`, `shield_hits`, `extra_air_jumps` para salto doble). Los modificadores de varios poderes activos se combinan. Escucha `power_started` / `power_ended` en el `PowerUpController` del jugador (`$PowerUps`).
+
+**Una cápsula con otro contenido**: crea una escena heredada de `scenes/pickups/capsule.tscn` (como `capsule_yarn.tscn`) y cambia su `item` a cualquier `WeaponData` o `PowerUpData`. Los enemigos también pueden soltar pickups con `drop_chance` y `drop_table` en su `EnemyStats`.
 
 ## Niveles
 
-Los niveles son texto ASCII (`resources/levels/*.tres`, recurso `LevelLayout`): `#` suelo, `=` plataforma one-way, `~` agua mortal, `P` inicio, y cualquier otro carácter se busca en `spawns` (ej. `R` corredor, `T` torreta, `F` volador). Caer bajo el nivel mata.
+Los niveles son texto ASCII (`resources/levels/*.tres`, recurso `LevelLayout`): `#` suelo, `=` plataforma one-way, `~` agua mortal, `P` inicio, y cualquier otro carácter se busca en `spawns` (ej. `R` corredor, `T` torreta, `F` volador; cápsulas `N` catnip, `M` leche, `Y` estambre, `B` espina, `S` spread). Caer bajo el nivel mata.
 
 ## Estructura
 
@@ -73,4 +77,4 @@ assets/audio/{sfx,music} audio (AudioManager.play_sfx)     resources/      Weapo
 scenes/                  escenas por tipo                   scripts/        código (autoload, player, weapons, enemies…)
 ```
 
-Audio: `AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`.
+Audio: `AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`, `pickup_weapon`, `power_catnip`, `power_milk`, `shield_break`.

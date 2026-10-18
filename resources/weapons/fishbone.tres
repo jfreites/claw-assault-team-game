@@ -8,6 +8,7 @@ script = ExtResource("1_weapon")
 bullet_scene = ExtResource("2_bullet")
 display_name = "Espina de pescado"
 hud_letter = "P"
+pickup_sprite = "pickups/weapon_fishbone"
 pattern = 3
 fire_rate = 5.0
 damage = 1

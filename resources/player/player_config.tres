@@ -17,3 +17,4 @@ hurt_time = 0.45
 hurt_knockback = Vector2(-70, -220)
 dead_time = 1.2
 respawn_invulnerability = 2.0
+shield_break_invulnerability = 1.0

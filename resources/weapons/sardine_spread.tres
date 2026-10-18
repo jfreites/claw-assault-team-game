@@ -8,6 +8,7 @@ script = ExtResource("1_weapon")
 bullet_scene = ExtResource("2_bullet")
 display_name = "Sardinas (spread)"
 hud_letter = "S"
+pickup_sprite = "pickups/weapon_sardine"
 pattern = 1
 fire_rate = 4.0
 damage = 1

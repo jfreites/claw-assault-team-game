@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pickups/pickup.gd" id="1_pickup"]
+[ext_resource type="Script" path="res://scripts/art/entity_sprite.gd" id="2_sprite"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pickup"]
+size = Vector2(14, 14)
+
+[node name="Pickup" type="Area2D"]
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("1_pickup")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+script = ExtResource("2_sprite")
+entity = "pickups/weapon_hairball"
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_pickup")

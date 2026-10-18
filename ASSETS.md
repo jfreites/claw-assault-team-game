@@ -108,8 +108,29 @@ Tira horizontal de tiles de **16×16** en este orden (índice = columna):
 
 El `TileSet` se construye en código (`scripts/levels/tileset_factory.gd`), así que basta con reemplazar el PNG.
 
+### Pickups y cápsula — `assets/sprites/pickups/<nombre>/`
+Anclaje `center`. El sprite de cada pickup lo indica el campo `pickup_sprite` de su `WeaponData` / `PowerUpData`, así que un arma o poder nuevo puede traer su propio ícono.
+
+| Entidad | Frame | Animación | Contenido |
+|---|---|---|---|
+| `pickups/capsule` | 26×16 | `fly` (2 @ 8) | Cápsula voladora (hitbox 22×14) |
+| `pickups/weapon_hairball` | 16×14 | `idle` (2 @ 4) | Bola de pelo |
+| `pickups/weapon_yarn` | 16×14 | `idle` (2 @ 4) | Estambre |
+| `pickups/weapon_fishbone` | 16×14 | `idle` (2 @ 4) | Espina de pescado |
+| `pickups/weapon_sardine` | 16×14 | `idle` (2 @ 4) | Sardinas |
+| `pickups/power_catnip` | 16×14 | `idle` (2 @ 4) | Catnip |
+| `pickups/power_milk` | 16×14 | `idle` (2 @ 4) | Leche |
+
+Hitbox del pickup: 14×14 fijo (`scenes/pickups/pickup.tscn`).
+
+### Efectos — `assets/sprites/fx/<nombre>/`
+
+| Entidad | Frame | Anclaje | Animación | Uso |
+|---|---|---|---|---|
+| `fx/shield` | 32×32 | center | `idle` (4 @ 10) | Burbuja del escudo de leche, centrada en (0, -13) del jugador |
+
 ### Pendientes (etapas siguientes)
-`boss/`, `pickups/` y `ui/` se documentarán cuando se construyan esas etapas.
+`boss/` y `ui/` se documentarán cuando se construyan esas etapas.
 
 ## Capas de colisión
 
@@ -122,7 +143,7 @@ Definidas con nombre en *Project Settings → Layer Names → 2D Physics* y como
 | 3 | `enemy` | Cuerpos, hurtbox y contacto de enemigos | Hurtbox del jugador (contacto) |
 | 4 | `player_bullet` | Balas del jugador | Hurtbox de enemigos |
 | 5 | `enemy_bullet` | Balas enemigas | Hurtbox del jugador |
-| 6 | `pickup` | Pickups y cápsulas (etapa 4) | — |
+| 6 | `pickup` | Pickups y cuerpo de la cápsula | Los pickups detectan el cuerpo del jugador (capa 2) |
 | 7 | `hazard` | Agua y abismo (muerte instantánea) | Hurtbox del jugador |
 | 8 | `one_way` | Plataformas atravesables | Cuerpos (el jugador la desactiva un instante al bajar) |
 

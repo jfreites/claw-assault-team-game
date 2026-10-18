@@ -70,6 +70,7 @@ func _test_player() -> void:
 
 	await _test_weapons()
 	await _test_enemies()
+	await _test_pickups()
 
 	# Agua: muerte instantánea
 	_teleport(Vector2(34 * 16 + 8, 10 * 16))
@@ -182,6 +183,73 @@ func _test_enemies() -> void:
 	await _frames(5)
 
 
+func _test_pickups() -> void:
+	_teleport(Vector2(72 * 16, 11 * 16))
+	await _frames(20)
+	var ground := player.global_position.y
+	player.facing = 1
+	player.weapon_holder.reset_to_default()
+
+	# Cápsula: al dispararle suelta su pickup, que cae al suelo
+	var capsule := _spawn("res://scenes/pickups/capsule_yarn.tscn", Vector2(player.global_position.x + 150, ground - 16))
+	var destroyed := []
+	capsule.died.connect(func(_e): destroyed.append(true))
+	Input.action_press("shoot")
+	await _until(func(): return not destroyed.is_empty(), 120)
+	Input.action_release("shoot")
+	_check(not destroyed.is_empty(), "la cápsula se destruye a disparos")
+	await _frames(60)
+	var pickups := _pickups()
+	_check(pickups.size() == 1, "la cápsula suelta un pickup")
+	if pickups.size() == 1:
+		var pk: Pickup = pickups[0]
+		_check(pk._landed and absf(pk.global_position.y + Pickup.REST_HEIGHT - ground) < 2.0, "el pickup cae hasta el suelo")
+		Input.action_press("move_right" if pk.global_position.x > player.global_position.x else "move_left")
+		await _until(func(): return _pickups().is_empty(), 120)
+		Input.action_release("move_right")
+		Input.action_release("move_left")
+		_check(player.weapon_holder.current.display_name == "Estambre", "recoger el pickup equipa el estambre")
+
+	# Catnip: más velocidad y cadencia, con señales de inicio y fin
+	var events := []
+	player.powers.power_started.connect(func(p): events.append("start:" + p.display_name))
+	player.powers.power_ended.connect(func(p): events.append("end:" + p.display_name))
+	var catnip: PowerUpData = load("res://resources/powerups/catnip.tres")
+	player.collect(catnip)
+	await _frames(2)
+	_check(events.has("start:Catnip"), "señal power_started del catnip")
+	_check(is_equal_approx(player.speed_multiplier, catnip.speed_multiplier) and is_equal_approx(player.weapon_holder.fire_rate_multiplier, catnip.fire_rate_multiplier), "catnip sube velocidad y cadencia")
+	_check(level.hud.power.text.contains("CATNIP"), "el HUD muestra el poder y su tiempo (%s)" % level.hud.power.text)
+	player.powers._remaining[catnip] = 0.05
+	await _frames(10)
+	_check(events.has("end:Catnip") and is_equal_approx(player.speed_multiplier, 1.0), "al terminar el catnip se restauran los valores")
+
+	# Leche: escudo que absorbe un golpe
+	player.collect(load("res://resources/powerups/milk.tres"))
+	await _frames(2)
+	_check(player.powers.shield_hits == 1 and player.shield_sprite.visible, "la leche activa el escudo visible")
+	var fake_hit := Hitbox.new()
+	player._on_hurtbox_hurt(1, fake_hit)
+	fake_hit.free()
+	await _frames(2)
+	_check(player.is_alive() and player.powers.shield_hits == 0, "el escudo absorbe un golpe")
+	_check(events.has("end:Leche") and player.is_invulnerable(), "escudo gastado termina el poder y da invulnerabilidad")
+
+	# Drop de enemigo
+	var runner := _spawn("res://scenes/enemies/runner.tscn", Vector2(player.global_position.x + 60, ground))
+	runner.stats = runner.stats.duplicate()
+	runner.stats.drop_chance = 1.0
+	var before := _pickups().size()
+	runner.die()
+	await _frames(5)
+	_check(_pickups().size() == before + 1, "un enemigo con drop_chance suelta pickup")
+	await _frames(70)
+
+
+func _pickups() -> Array:
+	return get_tree().get_nodes_in_group("projectile_root")[0].get_children().filter(func(n): return n is Pickup)
+
+
 func _spawn(path: String, pos: Vector2) -> Enemy:
 	var e: Enemy = load(path).instantiate()
 	e.position = pos
@@ -209,6 +277,14 @@ func _jump_peak(hold_frames: int) -> float:
 		peak = minf(peak, player.global_position.y)
 	Input.action_release("jump")
 	return peak
+
+
+## Espera hasta que `cond` sea verdadera o pasen `max_frames`
+func _until(cond: Callable, max_frames: int) -> void:
+	for i in max_frames:
+		if cond.call():
+			return
+		await get_tree().physics_frame
 
 
 func _frames(n: int) -> void:

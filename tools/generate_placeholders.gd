@@ -60,7 +60,8 @@ func _draw_frame(spec: Dictionary, anim_name: String, anim: Dictionary, frame: i
 		base = base.lerp(Color.html(anim["tint"]), 0.65)
 	var shape: String = anim.get("shape", "box")
 	var info := _draw_shape(img, shape, base, frame, count)
-	_outline(img, base.darkened(0.65))
+	if shape != "ring":
+		_outline(img, base.darkened(0.65))
 
 	var gun: String = anim.get("gun", "")
 	if gun != "" and info.has("gun"):
@@ -191,6 +192,24 @@ func _draw_shape(img: Image, shape: String, c: Color, f: int, n: int) -> Diction
 			_rect(img, w - 1 - int(w * 0.3), wy, int(w * 0.3), 4, c.lightened(0.2))
 			_rect(img, center.x + 3, center.y - 1, 2, 2, light)
 			return {"body": Rect2i(center.x - int(w * 0.28), center.y - int(h * 0.32), int(w * 0.56), int(h * 0.64))}
+		"pill":
+			# Cápsula de pickup: caja redondeada con brillo que se mueve
+			_rect(img, 1, 0, w - 2, h, c)
+			_rect(img, 0, 1, w, h - 2, c)
+			_rect(img, 2 + (f % 2) * (w - 6), 1, 2, 2, light)
+			return {"body": Rect2i(0, 0, w, h)}
+		"ring":
+			# Escudo: anillo semitransparente que late
+			var center := Vector2i(int(w * 0.5), int(h * 0.5))
+			var r := int(minf(w, h) * 0.5) - 2 - (f % 2)
+			var ring := Color(c, 0.85)
+			for a in 64:
+				var ang := TAU * a / 64.0
+				var pt := Vector2(center) + Vector2(cos(ang), sin(ang)) * r
+				_rect(img, int(pt.x), int(pt.y), 2, 2, ring)
+			var spark := Vector2(center) + Vector2.RIGHT.rotated(TAU * f / maxf(n, 1)) * r
+			_rect(img, int(spark.x) - 1, int(spark.y) - 1, 2, 2, Color.WHITE)
+			return {"body": Rect2i()}
 		_:
 			_rect(img, 0, 0, w, h, c)
 			return {"body": Rect2i(0, 0, w, h)}

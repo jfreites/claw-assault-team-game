@@ -8,6 +8,7 @@ script = ExtResource("1_weapon")
 bullet_scene = ExtResource("2_bullet")
 display_name = "Bola de pelo"
 hud_letter = "H"
+pickup_sprite = "pickups/weapon_hairball"
 pattern = 0
 fire_rate = 6.0
 damage = 1
