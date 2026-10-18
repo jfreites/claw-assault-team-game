@@ -20,6 +20,8 @@ func _initialize() -> void:
 	_action("start", [KEY_ENTER, KEY_KP_ENTER], [JOY_BUTTON_START], [])
 	# Depuración: cambiar de arma
 	_action("debug_next_weapon", [KEY_TAB], [JOY_BUTTON_BACK], [])
+	# Depuración: dibujar línea y punto de disparo
+	_action("debug_muzzle", [KEY_F1], [], [])
 	var err := ProjectSettings.save()
 	print("Input map guardado en project.godot (err=%d)" % err)
 	quit()

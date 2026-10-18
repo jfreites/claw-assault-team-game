@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="MuzzleConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/player/muzzle_config.gd" id="1_muzzle"]
+
+[resource]
+script = ExtResource("1_muzzle")
+horizontal_height = 14.0
+forward_distance = 14.0
+up = Vector2(2, -30)
+up_forward = Vector2(12, -24)
+down_forward = Vector2(12, -6)
+down = Vector2(0, -2)
+prone = Vector2(17, -4)
+state_offsets = {}

@@ -11,6 +11,7 @@ var player: Player
 
 
 func _ready() -> void:
+	seed(12345)  # drops aleatorios reproducibles
 	level = LEVEL.instantiate()
 	add_child(level)
 	# Las pruebas de movimiento se hacen sin los enemigos del nivel
@@ -68,6 +69,7 @@ func _test_player() -> void:
 	await _frames(30)
 	_check(player.global_position.y > on_platform_y + 20, "bajó a través de la plataforma (y=%.1f)" % player.global_position.y)
 
+	await _test_muzzle_line()
 	await _test_weapons()
 	await _test_enemies()
 	await _test_pickups()
@@ -76,6 +78,62 @@ func _test_player() -> void:
 	_teleport(Vector2(34 * 16 + 8, 10 * 16))
 	await _frames(40)
 	_check(player.state == Player.State.DEAD, "muere al caer al agua (pos=%s estado=%d)" % [player.global_position, player.state])
+
+
+## La bala horizontal sale a la misma altura en idle, run, jump y fall
+func _test_muzzle_line() -> void:
+	_teleport(Vector2(4 * 16, 11 * 16))
+	await _frames(20)
+	player.weapon_holder.reset_to_default()
+	var heights := {}
+	var spawn_y := {}
+	# Altura real de cada bala medida en el instante del disparo
+	var on_fired := func(_w):
+		var newest: Array = _bullets()
+		if newest.size() > 0:
+			var b: Bullet = newest[newest.size() - 1]
+			spawn_y[player.get_state_name()] = snappedf(player.global_position.y - b.position.y, 0.5)
+	player.weapon_holder.fired.connect(on_fired)
+	var record := func():
+		heights[player.get_state_name()] = player.global_position.y - player.get_muzzle_position().y
+	Input.action_press("shoot")
+	await _frames(12)
+	record.call()
+	Input.action_press("move_right")
+	await _frames(12)
+	record.call()
+	Input.action_press("jump")
+	await _frames(8)
+	record.call()
+	Input.action_release("jump")
+	await _until(func(): return player.velocity.y > 30.0, 60)
+	# Caída sin salto: forzar el estado FALL saliendo de un borde
+	Input.action_release("shoot")
+	Input.action_release("move_right")
+	await _until(func(): return player.is_on_floor(), 120)
+	await _until(func(): return _bullets().is_empty(), 120)
+	_teleport(Vector2(21 * 16 + 4, 9 * 16))
+	await _frames(1)
+	Input.action_press("shoot")
+	await _until(func(): return player.state == Player.State.FALL, 30)
+	await _frames(3)
+	record.call()
+	Input.action_release("shoot")
+	await _until(func(): return player.is_on_floor(), 120)
+	player.weapon_holder.fired.disconnect(on_fired)
+	var h: float = player.muzzle_config.horizontal_height
+	for s in ["idle", "run", "jump", "fall"]:
+		_check(heights.has(s) and is_equal_approx(heights[s], h), "altura de disparo en %s = %s (esperada %d)" % [s, heights.get(s, "?"), h])
+	var same := ["idle", "run", "jump", "fall"].all(func(s): return spawn_y.has(s) and is_equal_approx(spawn_y[s], h))
+	_check(same, "las balas reales salen a la misma altura %s" % [spawn_y])
+	player.facing = 1
+	player.aim = Vector2(1, -1).normalized()
+	_check(not is_equal_approx(player.global_position.y - player.get_muzzle_position().y, h), "la diagonal usa otro offset")
+	Input.action_press("crouch")
+	await _frames(3)
+	_check(player.state == Player.State.PRONE and player.global_position.y - player.get_muzzle_position().y < h, "echado dispara más bajo")
+	Input.action_release("crouch")
+	await _frames(30)
 
 
 func _test_weapons() -> void:
@@ -199,7 +257,7 @@ func _test_pickups() -> void:
 	Input.action_release("shoot")
 	_check(not destroyed.is_empty(), "la cápsula se destruye a disparos")
 	await _frames(60)
-	var pickups := _pickups()
+	var pickups := _pickups().filter(func(pk): return pk.item is WeaponData and pk.item.display_name == "Estambre")
 	_check(pickups.size() == 1, "la cápsula suelta un pickup")
 	if pickups.size() == 1:
 		var pk: Pickup = pickups[0]
@@ -216,6 +274,9 @@ func _test_pickups() -> void:
 	player.powers.power_ended.connect(func(p): events.append("end:" + p.display_name))
 	var catnip: PowerUpData = load("res://resources/powerups/catnip.tres")
 	player.weapon_holder.reset_to_default()
+	player.powers.clear()
+	for pk in _pickups():
+		pk.queue_free()
 	var normal_shots := await _count_shots(60)
 	var normal_x := player.global_position.x
 	Input.action_press("move_right")

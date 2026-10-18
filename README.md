@@ -30,10 +30,12 @@ El juego arranca en la pantalla de título (`scenes/ui/title_screen.tscn`): **ST
 | Fijar dirección de disparo | L / C / Shift | LB / RB |
 | Empezar (título / victoria) | Enter | START |
 | (Debug) cambiar de arma | Tab | Select/Back |
+| (Debug) ver línea y punto de disparo | F1 | — |
 
 - Abajo + saltar sobre una plataforma de madera = bajar a través de ella.
 - Abajo recto solo dispara hacia abajo en el aire; en el suelo te echas (hurtbox más bajo).
 - Mantén *fijar dirección* para caminar sin cambiar hacia dónde disparas.
+- El disparo horizontal sale siempre a la misma altura (14 px) estando parado, corriendo, saltando o cayendo; solo cambia al echarte o al apuntar en diagonal/vertical (`resources/player/muzzle_config.tres`).
 - Un golpe = una vida. Con 3 vidas; al perder una reapareces en el último checkpoint.
 - Dispara a las cápsulas voladoras para que suelten un arma o un poder; tócalo para recogerlo.
 - Poderes: **Catnip** (+40 % velocidad y +80 % cadencia, 10 s; el gato parpadea en verde) y **Leche** (escudo que absorbe un golpe, 20 s). El HUD muestra el tiempo restante.

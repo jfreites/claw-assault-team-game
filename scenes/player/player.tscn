@@ -10,6 +10,8 @@
 [ext_resource type="Resource" path="res://resources/weapons/fishbone.tres" id="8_fishbone"]
 [ext_resource type="Resource" path="res://resources/weapons/sardine_spread.tres" id="9_sardine"]
 [ext_resource type="Script" path="res://scripts/powerups/power_up_controller.gd" id="10_powers"]
+[ext_resource type="Resource" path="res://resources/player/muzzle_config.tres" id="11_muzzle"]
+[ext_resource type="Script" path="res://scripts/player/muzzle_guide.gd" id="12_guide"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(12, 24)
@@ -26,6 +28,7 @@ collision_mask = 129
 floor_snap_length = 4.0
 script = ExtResource("1_player")
 config = ExtResource("2_config")
+muzzle_config = ExtResource("11_muzzle")
 
 [node name="Body" type="CollisionShape2D" parent="."]
 position = Vector2(0, -12)
@@ -49,31 +52,8 @@ position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_prone")
 disabled = true
 
-[node name="Muzzles" type="Node2D" parent="."]
-
-[node name="Forward" type="Marker2D" parent="Muzzles"]
-position = Vector2(14, -16)
-
-[node name="Run" type="Marker2D" parent="Muzzles"]
-position = Vector2(16, -10)
-
-[node name="Up" type="Marker2D" parent="Muzzles"]
-position = Vector2(2, -32)
-
-[node name="UpForward" type="Marker2D" parent="Muzzles"]
-position = Vector2(13, -24)
-
-[node name="DownForward" type="Marker2D" parent="Muzzles"]
-position = Vector2(13, -5)
-
-[node name="Down" type="Marker2D" parent="Muzzles"]
-position = Vector2(0, 0)
-
-[node name="Prone" type="Marker2D" parent="Muzzles"]
-position = Vector2(17, -4)
-
-[node name="Air" type="Marker2D" parent="Muzzles"]
-position = Vector2(0, -14)
+[node name="MuzzleGuide" type="Node2D" parent="."]
+script = ExtResource("12_guide")
 
 [node name="WeaponHolder" type="Node2D" parent="."]
 script = ExtResource("5_holder")

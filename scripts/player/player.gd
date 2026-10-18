@@ -10,6 +10,8 @@ signal state_changed(new_state: int)
 enum State { IDLE, RUN, JUMP, FALL, PRONE, HURT, DEAD }
 
 @export var config: PlayerConfig
+## Puntos de disparo por estado y dirección (independientes del sprite)
+@export var muzzle_config: MuzzleConfig
 
 ## Multiplicadores que modifican los poderes temporales
 var speed_multiplier := 1.0
@@ -37,7 +39,6 @@ var _died_emitted := false
 @onready var hurtbox: Hurtbox = $Hurtbox
 @onready var hurt_stand: CollisionShape2D = $Hurtbox/Stand
 @onready var hurt_prone: CollisionShape2D = $Hurtbox/Prone
-@onready var muzzles: Node2D = $Muzzles
 @onready var weapon_holder: WeaponHolder = $WeaponHolder
 @onready var powers: PowerUpController = $PowerUps
 @onready var shield_sprite: EntitySprite = $ShieldSprite
@@ -46,6 +47,8 @@ var _died_emitted := false
 func _ready() -> void:
 	if config == null:
 		config = PlayerConfig.new()
+	if muzzle_config == null:
+		muzzle_config = MuzzleConfig.new()
 	add_to_group("player")
 	hurtbox.hurt.connect(_on_hurtbox_hurt)
 
@@ -254,29 +257,14 @@ func get_aim_point() -> Vector2:
 	return global_position + (Vector2(0, -5) if state == State.PRONE else Vector2(0, -14))
 
 
-## Punto de disparo según estado y dirección (Marker2D configurables en la escena)
+## Punto de disparo según estado y dirección, leído de MuzzleConfig
+## (idle/run/jump/fall comparten la misma línea horizontal)
 func get_muzzle_position() -> Vector2:
-	var marker_name := "Forward"
-	if state == State.JUMP:
-		# En el salto (bola) se dispara desde el centro hacia la dirección de apuntado
-		var air := muzzles.get_node_or_null("Air") as Marker2D
-		return global_position + (air.position if air else Vector2(0, -14)) + aim * 8.0
-	elif state == State.PRONE:
-		marker_name = "Prone"
-	elif aim.y < -0.9:
-		marker_name = "Up"
-	elif aim.y > 0.9:
-		marker_name = "Down"
-	elif aim.y < 0.0:
-		marker_name = "UpForward"
-	elif aim.y > 0.0:
-		marker_name = "DownForward"
-	elif state == State.RUN:
-		marker_name = "Run"
-	var marker := muzzles.get_node_or_null(marker_name) as Marker2D
-	var local := marker.position if marker else Vector2(12, -14)
-	local.x *= facing
-	return global_position + local
+	return global_position + muzzle_config.get_offset(get_state_name(), aim, facing)
+
+
+func get_state_name() -> String:
+	return String(State.keys()[state]).to_lower()
 
 
 # --- Estado y visuales ----------------------------------------------------

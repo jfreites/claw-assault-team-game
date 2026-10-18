@@ -36,7 +36,7 @@ La especificación de cada entidad (tamaño, animaciones, fps, anclaje) vive en 
 | Anclaje `feet` | Origen en los pies, centrado en X (personajes, enemigos de suelo, torretas) |
 | Anclaje `center` | Origen en el centro del frame (balas, voladores) |
 | Hitboxes | Son `CollisionShape2D` fijas en cada escena. **No dependen del tamaño del arte.** |
-| Punto de disparo | `Marker2D` en la escena (`Muzzles/*` del jugador, `Muzzle` de enemigos), no en el sprite |
+| Punto de disparo | Jugador: `MuzzleConfig` (`resources/player/muzzle_config.tres`). Enemigos y jefe: `Marker2D` `Muzzle` en su escena. Nunca en el sprite |
 
 El anclaje se calcula con el tamaño real del primer frame de la animación por defecto, así que si tu arte es más grande que el placeholder igual queda parado sobre el suelo.
 
@@ -82,18 +82,19 @@ Frame **32×32**, anclaje `feet`.
 | `dead` | 1 | 1 | no | Tirado en el suelo (opcional → `prone`) |
 
 Hitboxes fijas (escena `scenes/player/player.tscn`): cuerpo 12×24; hurtbox de pie 10×22; hurtbox echado 22×8.
-Puntos de disparo (`Muzzles/`, coordenadas mirando a la derecha, el código las espeja):
+Puntos de disparo: viven en `resources/player/muzzle_config.tres` (`MuzzleConfig`), medidos desde los pies y mirando a la derecha (el código los espeja). **No dependen del sprite**: cambiar el arte no mueve la línea de disparo.
 
-| Marker2D | Posición | Cuándo |
+| Campo | Valor | Cuándo |
 |---|---|---|
-| `Forward` | (14, -16) | De pie, al frente |
-| `Run` | (16, -10) | Corriendo, al frente |
-| `Up` | (2, -32) | Arriba |
-| `UpForward` | (13, -24) | Diagonal arriba |
-| `DownForward` | (13, -5) | Diagonal abajo |
-| `Down` | (0, 0) | Abajo (solo en el aire) |
-| `Prone` | (17, -4) | Echado |
-| `Air` | (0, -14) | Durante el salto (bola) |
+| `horizontal_height` / `forward_distance` | 14 / 14 → (14, -14) | Al frente en **idle, run, jump y fall** (misma línea siempre) |
+| `up` | (2, -30) | Arriba |
+| `up_forward` | (12, -24) | Diagonal arriba |
+| `down_forward` | (12, -6) | Diagonal abajo |
+| `down` | (0, -2) | Abajo (solo en el aire) |
+| `prone` | (17, -4) | Echado |
+| `state_offsets` | vacío | Ajuste extra por estado (`"run": Vector2(…)`), por si algún día se necesita |
+
+El nodo `MuzzleGuide` del jugador dibuja estos puntos en el editor (cruces amarillas y la línea horizontal en cian). En juego, **F1** muestra el punto de spawn y la línea de disparo actuales con el estado.
 
 ### Enemigos del Nivel 1 — `assets/sprites/levels/level_01/enemies/<tipo>/`
 
@@ -216,6 +217,6 @@ Ejemplo: la animación de correr del gato, 6 frames de 32×32.
 3. Abre el proyecto en Godot (importa los PNG automáticamente) o ejecuta `godot --headless --path . --import`.
 4. Juega. Si la animación tiene otro número de frames u otro tamaño, todo se ajusta solo; si usas hoja con otro tamaño de frame, agrega `run.json`.
 5. ¿Ajustar FPS por defecto o agregar una animación al catálogo? Edita `scripts/art/sprite_catalog.gd` (no es código de gameplay).
-6. Si el arma sale de un lugar raro respecto al arte nuevo, mueve los `Marker2D` de `Muzzles/` en `scenes/player/player.tscn`.
+6. Si el arma del arte nuevo queda lejos de donde sale la bala, ajusta el **arte** para que el cañón quede a 14 px de los pies, o cambia `resources/player/muzzle_config.tres` (afecta a todos los estados por igual). Verifícalo en juego con F1.
 
 Para volver a los placeholders de algo: borra esos PNG y ejecuta el generador (ver README).
