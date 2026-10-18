@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_weapon"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/bullet.tscn" id="2_bullet"]
+
+[resource]
+script = ExtResource("1_weapon")
+bullet_scene = ExtResource("2_bullet")
+display_name = "Sardinas (spread)"
+hud_letter = "S"
+pattern = 1
+fire_rate = 4.0
+damage = 1
+bullet_speed = 240.0
+lifetime = 1.0
+max_on_screen = 0
+sfx = "shoot_spread"
+bullet_sprite = "projectiles/sardine"
+hit_radius = 3.0
+rotate_sprite = true
+spread_count = 3
+spread_angle = 30.0

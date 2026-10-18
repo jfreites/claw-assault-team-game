@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_weapon"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/bullet.tscn" id="2_bullet"]
+
+[resource]
+script = ExtResource("1_weapon")
+bullet_scene = ExtResource("2_bullet")
+display_name = "Espina de pescado"
+hud_letter = "P"
+pattern = 3
+fire_rate = 5.0
+damage = 1
+bullet_speed = 420.0
+lifetime = 1.0
+max_on_screen = 0
+sfx = "shoot_fishbone"
+bullet_sprite = "projectiles/fishbone"
+hit_radius = 3.0
+rotate_sprite = true
+pierce_count = -1

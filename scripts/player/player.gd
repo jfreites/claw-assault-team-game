@@ -32,6 +32,7 @@ var _died_emitted := false
 @onready var hurt_stand: CollisionShape2D = $Hurtbox/Stand
 @onready var hurt_prone: CollisionShape2D = $Hurtbox/Prone
 @onready var muzzles: Node2D = $Muzzles
+@onready var weapon_holder: WeaponHolder = $WeaponHolder
 
 
 func _ready() -> void:
@@ -92,6 +93,11 @@ func _physics_control(delta: float) -> void:
 		aim = _compute_aim(h, up, down, on_floor)
 
 	move_and_slide()
+
+	if _pressed("shoot"):
+		weapon_holder.try_fire(get_muzzle_position(), aim)
+	if _just_pressed("debug_next_weapon"):
+		weapon_holder.cycle_debug_weapon()
 
 	if is_on_floor():
 		_jumped = false
@@ -205,7 +211,9 @@ func get_aim_point() -> Vector2:
 func get_muzzle_position() -> Vector2:
 	var marker_name := "Forward"
 	if state == State.JUMP:
-		marker_name = "Air"
+		# En el salto (bola) se dispara desde el centro hacia la dirección de apuntado
+		var air := muzzles.get_node_or_null("Air") as Marker2D
+		return global_position + (air.position if air else Vector2(0, -14)) + aim * 8.0
 	elif state == State.PRONE:
 		marker_name = "Prone"
 	elif aim.y < -0.9:

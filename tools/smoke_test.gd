@@ -65,10 +65,52 @@ func _test_player() -> void:
 	await _frames(30)
 	_check(player.global_position.y > on_platform_y + 20, "bajó a través de la plataforma (y=%.1f)" % player.global_position.y)
 
+	await _test_weapons()
+
 	# Agua: muerte instantánea
 	_teleport(Vector2(34 * 16 + 8, 10 * 16))
 	await _frames(40)
 	_check(player.state == Player.State.DEAD, "muere al caer al agua (pos=%s estado=%d)" % [player.global_position, player.state])
+
+
+func _test_weapons() -> void:
+	_teleport(Vector2(4 * 16, 11 * 16))
+	await _frames(20)
+	var holder := player.weapon_holder
+	_check(holder.current.display_name == "Bola de pelo", "arma por defecto: bola de pelo")
+	Input.action_press("shoot")
+	await _frames(30)
+	Input.action_release("shoot")
+	var shots := _bullets().size()
+	_check(shots >= 2 and shots <= 4, "dispara con cadencia y límite en pantalla (%d balas)" % shots)
+	await _frames(60)
+
+	Input.action_press("debug_next_weapon")
+	await _frames(3)
+	Input.action_release("debug_next_weapon")
+	_check(holder.current.display_name == "Estambre", "cambia a estambre (debug)")
+	Input.action_press("shoot")
+	await _frames(1)
+	Input.action_release("shoot")
+	var yarn := _bullets()
+	_check(yarn.size() == 1, "estambre dispara 1 bala")
+	if yarn.size() == 1:
+		var b: Bullet = yarn[0]
+		await _frames(25)
+		_check(is_instance_valid(b) and b.data.pattern == WeaponData.Pattern.BOUNCE and b._bounces_left < b.data.max_bounces, "el estambre rebota en el suelo")
+	await _frames(120)
+
+	holder.equip(load("res://resources/weapons/sardine_spread.tres"))
+	Input.action_press("shoot")
+	await _frames(1)
+	Input.action_release("shoot")
+	_check(_bullets().size() == 3, "spread dispara 3 balas (%d)" % _bullets().size())
+	await _frames(60)
+	holder.reset_to_default()
+
+
+func _bullets() -> Array:
+	return get_tree().get_nodes_in_group("projectile_root")[0].get_children().filter(func(n): return n is Bullet)
 
 
 func _teleport(pos: Vector2) -> void:

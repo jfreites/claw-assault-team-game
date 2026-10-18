@@ -28,6 +28,23 @@ const ENTITIES := {
 			"dead": {"frames": 1, "fps": 1.0, "loop": false, "shape": "flat"},
 		},
 	},
+	# --- Proyectiles (anclaje al centro, animación "fly") ---
+	"projectiles/hairball": {
+		"size": Vector2i(6, 6), "anchor": "center", "color": "c08a5a", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 12.0, "loop": true, "shape": "orb"}},
+	},
+	"projectiles/yarn": {
+		"size": Vector2i(8, 8), "anchor": "center", "color": "ff5fc0", "default": "fly",
+		"anims": {"fly": {"frames": 4, "fps": 12.0, "loop": true, "shape": "orb"}},
+	},
+	"projectiles/fishbone": {
+		"size": Vector2i(14, 6), "anchor": "center", "color": "e8ecff", "default": "fly",
+		"anims": {"fly": {"frames": 1, "fps": 1.0, "loop": true, "shape": "bone"}},
+	},
+	"projectiles/sardine": {
+		"size": Vector2i(7, 7), "anchor": "center", "color": "5fa8ff", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 12.0, "loop": true, "shape": "orb"}},
+	},
 }
 
 

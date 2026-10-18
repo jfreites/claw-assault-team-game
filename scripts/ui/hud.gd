@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## HUD mínimo (se completa en la etapa 7): vidas y mensajes centrales.
+## HUD mínimo (se completa en la etapa 7): vidas, arma actual y mensajes centrales.
 
 var _player: Player
 
@@ -16,6 +16,7 @@ func _ready() -> void:
 
 func bind_player(p: Player) -> void:
 	_player = p
+	p.weapon_holder.weapon_changed.connect(func(_w): _refresh())
 	_refresh()
 
 
@@ -29,4 +30,7 @@ func _on_lives_changed(_lives: int) -> void:
 
 
 func _refresh() -> void:
-	info.text = "VIDAS x%d" % GameState.lives
+	var text := "VIDAS x%d" % GameState.lives
+	if _player and _player.weapon_holder.current:
+		text += "   ARMA: %s" % _player.weapon_holder.current.display_name
+	info.text = text
