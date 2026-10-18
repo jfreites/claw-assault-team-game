@@ -2,7 +2,7 @@
 
 **C.A.T. (Claw Assault Team): Operation Island.** Vertical slice de un run & gun 2D estilo Contra protagonizado por un gato guerrero. Toda la acción ocurre en una misma isla, dividida en niveles (stages): playa, selva, cuevas, base… Godot 4.3+ (probado con 4.7.2), solo GDScript, sin plugins.
 
-> Estado: etapas 1–6 (jugador, armas, enemigos, pickups, poderes, Nivel 1: Playa de desembarco y jefe perro mecha) + título, lista de niveles y victoria. Falta la etapa 7 (HUD final, game feel, audio placeholder, pulido).
+> Estado: vertical slice completo (etapas 1–7). Título → Nivel 1: Playa de desembarco → jefe perro mecha → victoria, con Game Over/reintentar, HUD, game feel y SFX placeholder. Todo el arte y el audio son placeholders reemplazables.
 
 ## Ejecutar
 
@@ -49,6 +49,8 @@ godot --headless --path . --script res://tools/generate_placeholders.gd
 godot --headless --path . --script res://tools/generate_placeholders.gd -- --force
 # Importar los PNG nuevos sin abrir el editor
 godot --headless --path . --import
+# Regenerar SFX placeholder que falten (no pisa audio real; -- --force los rehace)
+godot --headless --path . --script res://tools/generate_sfx.gd
 # Reescribir el Input Map (teclado + gamepad) en project.godot
 godot --headless --path . --script res://tools/setup_input_map.gd
 # Prueba automática de movimiento, armas, enemigos, pickups y poderes
@@ -108,6 +110,30 @@ Los niveles son texto ASCII (`resources/levels/*.tres`, recurso `LevelLayout`), 
 
 Caer bajo el nivel mata. La cámara solo avanza; el fondo es un `ParallaxBackdrop` con dos capas (`backgrounds/far.png` y `near.png` dentro de la carpeta de arte del nivel). La música se pide con el campo `music` del nivel (`AudioManager.play_music`).
 
+## Pantallas y HUD
+
+- **Título** → START empieza la partida. **Game Over** (al perder las 3 vidas) → START reintenta el nivel actual con vidas completas. **Victoria** (al vencer al último jefe) → START empieza una partida nueva.
+- **HUD**: vidas como íconos (`ui/life`), arma actual con su ícono de pickup, poderes activos con ícono, tiempo y barra, barra de vida del jefe y mensajes centrales (nombre del nivel, checkpoint, misión cumplida).
+- **Game feel**: screen shake al recibir daño, explosiones, embestidas y aterrizajes; hit-flash blanco en enemigos y jefe; destello y chispas en el cañón al disparar; partículas en impactos, muertes, pickups y checkpoint.
+
+## Estado y siguientes pasos
+
+**Hecho**: las 7 etapas del plan, más título, lista de niveles, arte por nivel y la línea de disparo unificada (`MuzzleConfig`). Hay pruebas automáticas para movimiento, armas, enemigos, pickups, el recorrido del nivel y la pelea contra el jefe.
+
+**Decisiones principales**
+- Arte por convención de nombres + catálogo único (`sprite_catalog.gd`) que usan juego y generador. Hitboxes y puntos de disparo nunca dependen del sprite.
+- Niveles en texto ASCII con TileSet construido en código: se editan rápido y el tileset se reemplaza con un PNG.
+- Todo lo ajustable en `Resource` (`PlayerConfig`, `MuzzleConfig`, `WeaponData`, `PowerUpData`, `EnemyStats`, `BossData`/`BossPhaseData`, `LevelInfo`/`LevelList`).
+- Perder una vida recarga el nivel desde el último checkpoint (enemigos y jefe se reinician). Al morir pierdes el arma y los poderes, como en Contra.
+- Se agregó la capa de colisión 8 `one_way` para poder bajar por plataformas sin atravesar el suelo.
+
+**Para el siguiente paso**
+- **Arte real**: seguir ASSETS.md; empezar por jugador, tileset y fondos del nivel 1.
+- **Audio real**: música (`level_01`, `boss`) y reemplazo de los SFX sintetizados.
+- **Más niveles** (selva, cuevas, base): `LevelInfo` + layout + escena + carpeta de arte, y sumarlo a `level_list.tres`. Probablemente nuevos tipos de enemigo y un jefe por nivel.
+- **Pulido pendiente**: fuente bitmap propia para el HUD (hoy usa la fuente por defecto a 8 px), transiciones entre escenas, pausa, opciones de volumen y remapeo de controles, puntuación, y ajuste de dificultad/duración del nivel tras pruebas de juego.
+- **Exportación**: crear los presets de exportación (incluir `*.json` si se usan metadatos de hojas de sprites).
+
 ## Estructura
 
 ```
@@ -117,4 +143,6 @@ assets/audio/{sfx,music} audio (AudioManager.play_sfx)     resources/      Weapo
 scenes/                  escenas por tipo                   scripts/        código (autoload, player, weapons, enemies…)
 ```
 
-Audio: `AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`, `pickup_weapon`, `power_catnip`, `power_milk`, `shield_break`, `land`, `checkpoint`, `menu_start`, `boss_land`, `boss_fan`, `boss_charge`, `boss_crash`, `boss_mortar`, `boss_hit`, `boss_roar`, `armor_hit`, `explosion`, `boss_explode`, `stage_clear`. Música: `level_01`, `boss`.
+## Audio
+
+`AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Los SFX actuales son placeholders sintetizados por `tools/generate_sfx.gd` (estilo 8 bits, parámetros editables en el mismo script). Para usar audio real basta con soltar un archivo con el mismo nombre (si es `.ogg`/`.mp3`, borra el `.wav` placeholder). La música se pide con `AudioManager.play_music(nombre)` y busca en `assets/audio/music/`; hoy no hay pistas, así que suena en silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`, `pickup_weapon`, `power_catnip`, `power_milk`, `shield_break`, `land`, `checkpoint`, `menu_start`, `boss_land`, `boss_fan`, `boss_charge`, `boss_crash`, `boss_mortar`, `boss_hit`, `boss_roar`, `armor_hit`, `explosion`, `boss_explode`, `stage_clear`. Música: `level_01`, `boss`.

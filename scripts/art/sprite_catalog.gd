@@ -91,6 +91,11 @@ const ENTITIES := {
 			"active": {"frames": 2, "fps": 6.0, "loop": true, "shape": "flag_up"},
 		},
 	},
+	# --- Interfaz ---
+	"ui/life": {
+		"size": Vector2i(9, 8), "anchor": "center", "color": "f0a030", "default": "idle",
+		"anims": {"idle": {"frames": 1, "fps": 1.0, "loop": true, "shape": "head"}},
+	},
 	# --- Efectos ---
 	"fx/shield": {
 		"size": Vector2i(32, 32), "anchor": "center", "color": "ffe066", "default": "idle",

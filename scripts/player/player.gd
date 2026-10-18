@@ -189,6 +189,8 @@ func kill(instant := false) -> void:
 	hurtbox.active = false
 	powers.clear()
 	AudioManager.play_sfx("player_hurt")
+	Fx.burst(self, global_position + Vector2(0, -12), Color(1, 0.65, 0.2), 16, 110.0, 0.5)
+	Fx.burst(self, global_position + Vector2(0, -12), Color.WHITE, 8, 70.0, 0.3)
 	GameCamera.shake_current(self, 3.0, 0.25)
 	if instant:
 		velocity = Vector2.ZERO

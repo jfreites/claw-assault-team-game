@@ -224,6 +224,14 @@ func _draw_shape(img: Image, shape: String, c: Color, f: int, n: int) -> Diction
 				_rect(img, lx, y0 + bh + bob, 5, 10 - bob - off, c.darkened(0.35))
 			_rect(img, x0 - 8, y0 + 2, 8, 3, c)
 			return {"body": Rect2i(x0, y0 + bob, bw, bh), "gun": Vector2i(hx + 14, y0 + 2)}
+		"head":
+			# Ícono de vida: cabeza de gato con orejas
+			_rect(img, 1, 2, w - 2, h - 2, c)
+			_rect(img, 1, 0, 2, 2, c)
+			_rect(img, w - 3, 0, 2, 2, c)
+			img.set_pixel(3, 4, Color.BLACK)
+			img.set_pixel(w - 4, 4, Color.BLACK)
+			return {"body": Rect2i()}
 		"pill":
 			# Cápsula de pickup: caja redondeada con brillo que se mueve
 			_rect(img, 1, 0, w - 2, h, c)
@@ -328,7 +336,7 @@ func _generate_backgrounds() -> void:
 		_rect(far, 0, 128, w, h - 128, Color("2f78c4"))
 		for k in 40:
 			_rect(far, rng.randi_range(0, w), rng.randi_range(132, h), rng.randi_range(3, 8), 1, Color("5d9ad8"))
-		PixelFont.draw_text(far, "FAR", Vector2i(2, 2), Color(1, 1, 1, 0.6))
+		PixelFont.draw_text(far, "FAR", Vector2i(180, 70), Color(1, 1, 1, 0.5))
 		_save(far, far_path)
 	var near_path := dir + "/near.png"
 	if _force or not FileAccess.file_exists(near_path):
@@ -348,7 +356,7 @@ func _generate_backgrounds() -> void:
 					_rect(near, int(p.x), int(p.y), 3, 2, leaf)
 		for k in 14:
 			_ellipse(near, Vector2i(rng.randi_range(0, w), h - 8), rng.randi_range(14, 26), rng.randi_range(8, 14), leaf.darkened(0.2))
-		PixelFont.draw_text(near, "NEAR", Vector2i(2, 10), Color(1, 1, 1, 0.6))
+		PixelFont.draw_text(near, "NEAR", Vector2i(180, 78), Color(1, 1, 1, 0.5))
 		_save(near, near_path)
 
 

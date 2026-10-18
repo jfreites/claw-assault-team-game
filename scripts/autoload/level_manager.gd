@@ -5,6 +5,7 @@ extends Node
 const LEVEL_LIST_PATH := "res://resources/levels/level_list.tres"
 const TITLE_SCENE := "res://scenes/ui/title_screen.tscn"
 const VICTORY_SCENE := "res://scenes/ui/victory_screen.tscn"
+const GAME_OVER_SCENE := "res://scenes/ui/game_over_screen.tscn"
 
 var level_list: LevelList
 var current_index := 0
@@ -37,6 +38,16 @@ func complete_current_level() -> void:
 		go_to_level(current_index + 1)
 	else:
 		get_tree().change_scene_to_file(VICTORY_SCENE)
+
+
+## Reintenta el nivel actual desde el principio con las vidas completas
+func retry_current_level() -> void:
+	GameState.reset_run()
+	go_to_level(current_index)
+
+
+func show_game_over() -> void:
+	get_tree().change_scene_to_file(GAME_OVER_SCENE)
 
 
 func go_to_title() -> void:

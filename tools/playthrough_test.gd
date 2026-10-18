@@ -57,6 +57,9 @@ func _ready() -> void:
 		Input.action_release("move_left")
 		_check(player.global_position.x >= cam.get_view_rect().position.x, "no se puede salir de la arena hacia atrás")
 	print("PLAYTHROUGH: %s (%d fallos)" % ["OK" if _failures == 0 else "FALLÓ", _failures])
+	# Silenciar y esperar un poco: así el servidor de audio suelta los sonidos antes de salir
+	AudioManager.stop_all()
+	await _frames(5)
 	get_tree().quit(1 if _failures > 0 else 0)
 
 

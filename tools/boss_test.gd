@@ -92,6 +92,9 @@ func _ready() -> void:
 	_check(not level.hud.boss_bar.visible and level.hud.message.visible, "se oculta la barra y aparece el mensaje de victoria")
 	_check(_enemy_bullets().is_empty(), "se limpian las balas enemigas")
 	print("BOSS TEST: %s (%d fallos)" % ["OK" if _failures == 0 else "FALLÓ", _failures])
+	# Silenciar y esperar un poco: así el servidor de audio suelta los sonidos antes de salir
+	AudioManager.stop_all()
+	await _frames(5)
 	get_tree().quit(1 if _failures > 0 else 0)
 
 

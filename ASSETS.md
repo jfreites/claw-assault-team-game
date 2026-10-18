@@ -187,8 +187,22 @@ Puntos de disparo: `Muzzle` (34, -30) para el abanico y `MortarMuzzle` (-12, -50
 
 Proyectil del mortero: `projectiles/boss_shell` (10×6, `fly` 2 @ 10, rota con la trayectoria).
 
-### Pendientes (etapas siguientes)
-`ui/` se documentará en la etapa 7.
+### Interfaz — `assets/sprites/ui/`
+
+| Entidad | Frame | Anclaje | Animación | Uso |
+|---|---|---|---|---|
+| `ui/life` | 9×8 | center | `idle` (1) | Ícono de vida en el HUD (se repite una vez por vida) |
+
+El HUD reutiliza el primer frame del sprite de pickup (`pickup_sprite` de `WeaponData` / `PowerUpData`) como ícono del arma y de los poderes, así que un arma o poder nuevo trae su ícono automáticamente.
+
+## Audio — `assets/audio/`
+
+| Carpeta | Formato | Notas |
+|---|---|---|
+| `sfx/<nombre>.wav\|ogg\|mp3` | Cualquiera de los tres | El nombre es el hook que pide el código (lista en README). Los `.wav` actuales son placeholders de `tools/generate_sfx.gd` |
+| `music/<nombre>.ogg` (recomendado) | Con loop activado en la importación | `level_01` (nivel 1), `boss` (arena del jefe) |
+
+Si conviven un placeholder `.wav` y tu `.ogg` con el mismo nombre, gana el `.wav` (se busca primero): borra el placeholder.
 
 ## Capas de colisión
 

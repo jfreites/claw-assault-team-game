@@ -21,6 +21,9 @@ func _ready() -> void:
 	player = level.player
 	await _test_player()
 	print("SMOKE TEST: %s (%d fallos)" % ["OK" if _failures == 0 else "FALLÓ", _failures])
+	# Silenciar y esperar un poco: así el servidor de audio suelta los sonidos antes de salir
+	AudioManager.stop_all()
+	await _frames(5)
 	get_tree().quit(1 if _failures > 0 else 0)
 
 
@@ -300,7 +303,7 @@ func _test_pickups() -> void:
 	await _frames(20)
 	_check(events.has("start:Catnip"), "señal power_started del catnip")
 	_check(is_equal_approx(player.speed_multiplier, catnip.speed_multiplier) and is_equal_approx(player.weapon_holder.fire_rate_multiplier, catnip.fire_rate_multiplier), "catnip sube velocidad y cadencia")
-	_check(level.hud.power.text.contains("CATNIP"), "el HUD muestra el poder y su tiempo (%s)" % level.hud.power.text)
+	_check(level.hud.get_power_text().contains("CATNIP"), "el HUD muestra el poder y su tiempo (%s)" % level.hud.get_power_text())
 	player.powers._remaining[catnip] = 0.05
 	await _frames(10)
 	_check(events.has("end:Catnip") and is_equal_approx(player.speed_multiplier, 1.0), "al terminar el catnip se restauran los valores")

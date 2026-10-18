@@ -8,7 +8,7 @@ anchors_preset = 0
 offset_right = 384.0
 offset_bottom = 216.0
 script = ExtResource("1_menu")
-on_start = 1
+on_start = 0
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 0
@@ -64,6 +64,6 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 8
-text = "PRESIONA START"
+text = "PRESIONA START PARA JUGAR DE NUEVO"
 horizontal_alignment = 1
 vertical_alignment = 1

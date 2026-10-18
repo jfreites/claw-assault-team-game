@@ -54,5 +54,7 @@ func try_fire(origin: Vector2, direction: Vector2) -> bool:
 			return false
 	_cooldown = 1.0 / (current.fire_rate * fire_rate_multiplier)
 	_active.append_array(Bullet.spawn_pattern(current, origin, direction, player_owned, self, damage_multiplier))
+	if player_owned:
+		Fx.muzzle_flash(self, origin, direction)
 	fired.emit(current)
 	return true

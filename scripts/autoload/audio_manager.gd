@@ -27,6 +27,20 @@ func _ready() -> void:
 	add_child(_music)
 
 
+func _exit_tree() -> void:
+	stop_all()
+
+
+## Detiene todo y suelta los streams (al cerrar o cambiar de contexto)
+func stop_all() -> void:
+	for player in _pool:
+		player.stop()
+		player.stream = null
+	_music.stop()
+	_music.stream = null
+	_cache.clear()
+
+
 func play_sfx(sfx_name: String, volume_db := 0.0, pitch := 1.0) -> void:
 	if sfx_name.is_empty():
 		return

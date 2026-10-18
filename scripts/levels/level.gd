@@ -24,7 +24,6 @@ var player: Player
 var level_size := Vector2.ZERO
 
 var _player_start := Vector2(32, 160)
-var _game_over := false
 var _arena_x := -1.0
 var _arena_reached := false
 
@@ -52,12 +51,6 @@ func _ready() -> void:
 		AudioManager.play_music(music)
 	if info and fresh_start:
 		hud.flash_message("NIVEL %d\n%s" % [info.number, info.title.to_upper()], 2.5)
-
-
-func _physics_process(_delta: float) -> void:
-	if _game_over and (Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("shoot") or Input.is_action_just_pressed("ui_accept")):
-		GameState.reset_run()
-		get_tree().reload_current_scene()
 
 
 func _build_from_layout() -> void:
@@ -216,5 +209,5 @@ func _on_player_died() -> void:
 		await get_tree().create_timer(respawn_delay).timeout
 		get_tree().reload_current_scene()
 	else:
-		_game_over = true
-		hud.show_message("GAME OVER\nSaltar para reintentar")
+		await get_tree().create_timer(respawn_delay).timeout
+		LevelManager.show_game_over()
