@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4apmraqwnxka"
-path="res://.godot/imported/fall_0.png-c93e2430698bcd7da2193b9dd81741e6.ctex"
+uid="uid://q25ne04df5tf"
+path="res://.godot/imported/run_1.png-2a96c5f62cd81560c4eb1f9d4023477d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/runner/fall_0.png"
-dest_files=["res://.godot/imported/fall_0.png-c93e2430698bcd7da2193b9dd81741e6.ctex"]
+source_file="res://assets/sprites/levels/level_01/enemies/runner/run_1.png"
+dest_files=["res://.godot/imported/run_1.png-2a96c5f62cd81560c4eb1f9d4023477d.ctex"]
 
 [params]
 

@@ -1,12 +1,14 @@
 class_name TilesetFactory
 extends RefCounted
-## Construye el TileSet del juego en runtime a partir de assets/sprites/tiles/tileset.png
-## (tira horizontal de tiles de 16x16, ver ASSETS.md). Cambiar el PNG cambia el arte.
+## Construye el TileSet del juego en runtime a partir de tiles/tileset.png del nivel actual
+## (assets/sprites/levels/<nivel>/tiles/tileset.png; tira horizontal de tiles de 16x16,
+## ver ASSETS.md). Cambiar el PNG cambia el arte.
 
 enum Tile { GROUND_TOP, GROUND_FILL, PLATFORM, WATER_TOP, WATER_FILL, SAND_TOP, SAND_FILL }
 
 const TILE_SIZE := 16
-const TEXTURE_PATH := "res://assets/sprites/tiles/tileset.png"
+## Relativa a la carpeta de arte (se resuelve con SpriteLoader.resolve_asset)
+const TEXTURE_PATH := "tiles/tileset.png"
 const SOURCE_ID := 0
 const PLATFORM_THICKNESS := 4.0
 
@@ -25,7 +27,7 @@ static func build() -> TileSet:
 	ts.set_physics_layer_collision_mask(1, 0)
 
 	var source := TileSetAtlasSource.new()
-	source.texture = Loader.load_texture(TEXTURE_PATH)
+	source.texture = Loader.load_texture(Loader.resolve_asset(TEXTURE_PATH))
 	source.texture_region_size = Vector2i(TILE_SIZE, TILE_SIZE)
 	ts.add_source(source, SOURCE_ID)
 	# Si el PNG trae menos tiles (arte viejo) solo se crean los que existen

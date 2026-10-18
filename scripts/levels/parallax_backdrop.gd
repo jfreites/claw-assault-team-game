@@ -3,10 +3,11 @@ extends Node2D
 ## Fondo parallax de varias capas. Cada capa es un PNG (cargado vía SpriteLoader,
 ## así el arte se reemplaza sin tocar código) que se repite horizontalmente.
 
-## Rutas de las texturas, de la más lejana a la más cercana
+## Texturas de la más lejana a la más cercana, relativas a la carpeta de arte
+## (se buscan primero en assets/sprites/levels/<nivel actual>/)
 @export var textures: PackedStringArray = [
-	"res://assets/sprites/backgrounds/far.png",
-	"res://assets/sprites/backgrounds/near.png",
+	"backgrounds/far.png",
+	"backgrounds/near.png",
 ]
 ## Factor de desplazamiento horizontal de cada capa (0 = fija, 1 = como el mundo)
 @export var scroll_factors: PackedFloat32Array = [0.15, 0.45]
@@ -17,7 +18,7 @@ const Loader := preload("res://scripts/autoload/sprite_loader.gd")
 func _ready() -> void:
 	z_index = -100
 	for i in textures.size():
-		var tex := Loader.load_texture(textures[i])
+		var tex := Loader.load_texture(Loader.resolve_asset(textures[i]))
 		if tex == null:
 			continue
 		var layer := Parallax2D.new()

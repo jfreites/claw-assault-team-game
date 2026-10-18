@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnrx2ajov3t3t"
-path="res://.godot/imported/tileset.png-b469b8e53115f1031cc06b959495c65e.ctex"
+uid="uid://dbpmu0d2ytpae"
+path="res://.godot/imported/fly_0.png-1a2dd319509140a45a08271df5c1534f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/tiles/tileset.png"
-dest_files=["res://.godot/imported/tileset.png-b469b8e53115f1031cc06b959495c65e.ctex"]
+source_file="res://assets/sprites/levels/level_01/enemies/flyer/fly_0.png"
+dest_files=["res://.godot/imported/fly_0.png-1a2dd319509140a45a08271df5c1534f.ctex"]
 
 [params]
 

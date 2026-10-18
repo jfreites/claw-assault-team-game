@@ -4,7 +4,7 @@ extends Node
 ## Uso: godot --headless --path . res://tools/playthrough_test.tscn
 ## (el jugador es invulnerable a enemigos; el agua/abismo sí lo matan)
 
-const LEVEL_PATH := "res://scenes/levels/level_1.tscn"
+const LEVEL_PATH := "res://scenes/levels/level_01.tscn"
 const TIME_LIMIT := 240.0
 
 var level: Level
@@ -35,6 +35,7 @@ func _ready() -> void:
 		await get_tree().physics_frame
 		t += 1.0 / Engine.physics_ticks_per_second
 		if not is_instance_valid(player) or not player.is_alive():
+			print("    el bot murió en x=%.0f (col %d) y=%.0f velocidad=%.2f" % [player.global_position.x, int(player.global_position.x / 16), player.global_position.y, player.speed_multiplier])
 			break
 		if checkpoint_time < 0.0 and GameState.has_checkpoint():
 			checkpoint_time = t

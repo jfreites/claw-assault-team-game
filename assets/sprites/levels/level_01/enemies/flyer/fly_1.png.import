@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm5iwj46i03hb"
-path="res://.godot/imported/fly_1.png-13d6e5b8eecdaa1dbe4d481a489eb88f.ctex"
+uid="uid://b8qqx0t3ubbc8"
+path="res://.godot/imported/fly_1.png-4bdfa6396b94a3b3d8e453cc235fbc7b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/flyer/fly_1.png"
-dest_files=["res://.godot/imported/fly_1.png-13d6e5b8eecdaa1dbe4d481a489eb88f.ctex"]
+source_file="res://assets/sprites/levels/level_01/enemies/flyer/fly_1.png"
+dest_files=["res://.godot/imported/fly_1.png-4bdfa6396b94a3b3d8e453cc235fbc7b.ctex"]
 
 [params]
 

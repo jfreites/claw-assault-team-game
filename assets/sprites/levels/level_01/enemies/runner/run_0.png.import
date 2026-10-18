@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bt6qdil747dfn"
-path="res://.godot/imported/fly_0.png-19cf98a156115bf30706eb551cdd1995.ctex"
+uid="uid://dqq40h1n45xx"
+path="res://.godot/imported/run_0.png-8e42ffaedd7181577a7dfdb8d1b85ac3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/flyer/fly_0.png"
-dest_files=["res://.godot/imported/fly_0.png-19cf98a156115bf30706eb551cdd1995.ctex"]
+source_file="res://assets/sprites/levels/level_01/enemies/runner/run_0.png"
+dest_files=["res://.godot/imported/run_0.png-8e42ffaedd7181577a7dfdb8d1b85ac3.ctex"]
 
 [params]
 

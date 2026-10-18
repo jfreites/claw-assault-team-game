@@ -1,6 +1,27 @@
-# Guía de arte (ASSETS)
+# Guía de arte (ASSETS) — C.A.T.: Operation Island
 
 Todo el arte se carga **por convención de nombres**. Si dejas un PNG real con el mismo nombre que el placeholder, el juego lo usa automáticamente: no hay que tocar código ni escenas.
+
+## Arte compartido vs. arte de nivel
+
+La isla está dividida en niveles, y cada uno puede traer su propio arte:
+
+```
+assets/sprites/
+  player/ projectiles/ pickups/ props/ fx/ ui/   ← compartido por todos los niveles
+  levels/
+    level_01/                                    ← Nivel 1: Playa de desembarco
+      tiles/tileset.png
+      backgrounds/far.png, near.png
+      enemies/runner/, turret/, flyer/
+```
+
+`SpriteLoader` busca cada carpeta o archivo en este orden:
+1. `assets/sprites/levels/<nivel actual>/…` (la carpeta `art_dir` del `LevelInfo` del nivel)
+2. `assets/sprites/…` (compartido)
+3. `assets/sprites/levels/level_01/…` (nivel por defecto: lo usan el editor y el campo de pruebas)
+
+Así un nivel nuevo puede reutilizar a los enemigos del nivel 1 o darles otra piel simplemente creando `assets/sprites/levels/level_02/enemies/runner/` con los mismos nombres de archivo.
 
 La especificación de cada entidad (tamaño, animaciones, fps, anclaje) vive en un solo lugar: [`scripts/art/sprite_catalog.gd`](scripts/art/sprite_catalog.gd). Ese archivo lo leen tanto el juego (`SpriteLoader`) como el generador de placeholders.
 
@@ -73,7 +94,7 @@ Puntos de disparo (`Muzzles/`, coordenadas mirando a la derecha, el código las 
 | `Prone` | (17, -4) | Echado |
 | `Air` | (0, -14) | Durante el salto (bola) |
 
-### Enemigos — `assets/sprites/enemies/<tipo>/`
+### Enemigos del Nivel 1 — `assets/sprites/levels/level_01/enemies/<tipo>/`
 
 | Entidad | Frame | Anclaje | Animaciones (frames @ fps) | Muzzle (escena) |
 |---|---|---|---|---|
@@ -95,7 +116,7 @@ Anclaje `center`, animación `fly`. Las balas con `rotate_sprite = true` en su `
 
 El radio del hitbox de cada bala es `hit_radius` en su `WeaponData`, independiente del arte.
 
-### Tiles — `assets/sprites/tiles/tileset.png`
+### Tiles — `assets/sprites/levels/<nivel>/tiles/tileset.png`
 Tira horizontal de tiles de **16×16** en este orden (índice = columna):
 
 | Índice | Tile | Colisión |
@@ -127,7 +148,7 @@ Anclaje `center`. El sprite de cada pickup lo indica el campo `pickup_sprite` de
 
 Hitbox del pickup: 14×14 fijo (`scenes/pickups/pickup.tscn`).
 
-### Fondos — `assets/sprites/backgrounds/`
+### Fondos — `assets/sprites/levels/<nivel>/backgrounds/`
 Imágenes sueltas de **384×216** (una pantalla) que se repiten en horizontal. Las rutas y velocidades están en el nodo `Backdrop` (`ParallaxBackdrop`) de cada nivel.
 
 | Archivo | Factor de scroll | Contenido |

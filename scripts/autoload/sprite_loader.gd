@@ -1,5 +1,9 @@
 extends Node
 ## SpriteLoader (autoload): construye el SpriteFrames de cada entidad leyendo su carpeta.
+## Orden de búsqueda de una carpeta o archivo:
+##   1. assets/sprites/levels/<nivel actual>/   (arte propio del nivel)
+##   2. assets/sprites/                          (arte compartido)
+##   3. assets/sprites/levels/<nivel por defecto>/ (respaldo para editor y pruebas)
 ##   assets/sprites/<entidad>/<anim>_<n>.png  → frames sueltos (run_0.png, run_1.png, ...)
 ##   assets/sprites/<entidad>/<anim>.png      → hoja horizontal (tiene prioridad sobre los sueltos)
 ##   assets/sprites/<entidad>/<anim>.json     → metadata opcional de la hoja
@@ -9,15 +13,63 @@ extends Node
 const Catalog := preload("res://scripts/art/sprite_catalog.gd")
 const MAX_FRAMES := 64
 
+static var _level_dir := ""
 static var _frames_cache: Dictionary = {}
 static var _texture_cache: Dictionary = {}
 static var _frame_regex: RegEx
 
 
+## Fija la carpeta de arte del nivel actual (la llama Level al entrar al árbol)
+static func set_level_art_dir(dir: String) -> void:
+	_level_dir = dir if dir.is_empty() or dir.ends_with("/") else dir + "/"
+
+
+static func get_level_art_dir() -> String:
+	return _level_dir
+
+
 static func get_frames(entity: String) -> SpriteFrames:
-	if not _frames_cache.has(entity):
-		_frames_cache[entity] = build_frames(entity)
-	return _frames_cache[entity]
+	var dir := resolve_entity_dir(entity)
+	if not _frames_cache.has(dir):
+		_frames_cache[dir] = build_frames(entity, dir)
+	return _frames_cache[dir]
+
+
+## Carpeta efectiva de una entidad según el orden de búsqueda
+static func resolve_entity_dir(entity: String) -> String:
+	for root in _search_roots(entity):
+		var dir: String = root + entity + "/"
+		if _dir_has_png(dir):
+			return dir
+	return Catalog.home_dir(entity)
+
+
+## Ruta efectiva de un archivo suelto relativo a assets/sprites (ej. "tiles/tileset.png")
+static func resolve_asset(relative_path: String) -> String:
+	for root in _search_roots(""):
+		var path: String = root + relative_path
+		if resource_exists(path):
+			return path
+	return Catalog.ROOT + relative_path
+
+
+static func _search_roots(entity: String) -> Array[String]:
+	var roots: Array[String] = []
+	if _level_dir != "":
+		roots.append(_level_dir)
+	roots.append(Catalog.ROOT)
+	var level: String = Catalog.get_spec(entity).get("level", Catalog.DEFAULT_LEVEL)
+	roots.append(Catalog.level_dir(level))
+	return roots
+
+
+static func _dir_has_png(dir: String) -> bool:
+	if not DirAccess.dir_exists_absolute(dir):
+		return false
+	for file in DirAccess.get_files_at(dir):
+		if file.trim_suffix(".import").trim_suffix(".remap").get_extension().to_lower() == "png":
+			return true
+	return false
 
 
 static func clear_cache() -> void:
@@ -45,9 +97,8 @@ static func get_frame_size(frames: SpriteFrames, anim: StringName) -> Vector2:
 	return Vector2(16, 16)
 
 
-static func build_frames(entity: String) -> SpriteFrames:
+static func build_frames(entity: String, dir: String) -> SpriteFrames:
 	var spec := Catalog.get_spec(entity)
-	var dir := Catalog.ROOT + entity + "/"
 	var anims: Dictionary = spec.get("anims", {})
 	var names: Array = anims.keys()
 	# Animaciones extra que el artista agregue y no estén en el catálogo

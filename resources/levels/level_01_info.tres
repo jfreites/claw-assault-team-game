@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LevelInfo" format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level_info.gd" id="1_info"]
+
+[resource]
+script = ExtResource("1_info")
+id = "level_01"
+number = 1
+title = "Playa de desembarco"
+scene_path = "res://scenes/levels/level_01.tscn"
+art_dir = "res://assets/sprites/levels/level_01"

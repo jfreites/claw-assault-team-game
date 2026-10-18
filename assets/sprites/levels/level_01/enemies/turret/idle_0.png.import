@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://doile7dgkhy6q"
-path="res://.godot/imported/idle_0.png-6055f337d850ad02b5c347b7cf59355e.ctex"
+uid="uid://cngpe06msgt0"
+path="res://.godot/imported/idle_0.png-e6cd2fe7e1a1acc218cc890159ed613c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/turret/idle_0.png"
-dest_files=["res://.godot/imported/idle_0.png-6055f337d850ad02b5c347b7cf59355e.ctex"]
+source_file="res://assets/sprites/levels/level_01/enemies/turret/idle_0.png"
+dest_files=["res://.godot/imported/idle_0.png-e6cd2fe7e1a1acc218cc890159ed613c.ctex"]
 
 [params]
 

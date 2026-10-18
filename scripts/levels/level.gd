@@ -5,6 +5,8 @@ extends Node2D
 
 signal boss_arena_entered
 
+## Ficha del nivel (nombre y carpeta de arte); vacío = arte por defecto (campo de pruebas)
+@export var info: LevelInfo
 @export var layout: LevelLayout
 @export var player_scene: PackedScene
 @export var respawn_delay := 0.5
@@ -27,7 +29,14 @@ var _arena_reached := false
 @onready var hud: Hud = $HUD
 
 
+func _enter_tree() -> void:
+	# Antes del _ready de los hijos: así fondo, tiles y enemigos usan el arte de este nivel
+	SpriteLoader.set_level_art_dir(info.art_dir if info else "")
+	LevelManager.notify_level_loaded(scene_file_path)
+
+
 func _ready() -> void:
+	var fresh_start := not GameState.respawning
 	tiles.tile_set = TilesetFactory.build()
 	_build_from_layout()
 	_setup_camera()
@@ -36,6 +45,8 @@ func _ready() -> void:
 		_add_arena_trigger()
 	if music != "":
 		AudioManager.play_music(music)
+	if info and fresh_start:
+		hud.flash_message("NIVEL %d\n%s" % [info.number, info.title.to_upper()], 2.5)
 
 
 func _physics_process(_delta: float) -> void:

@@ -2,11 +2,15 @@ class_name SpriteCatalog
 extends RefCounted
 ## Catálogo de arte por entidad: tamaño de frame, anclaje y animaciones (frames, fps, loop).
 ## Es la fuente única que usan SpriteLoader (runtime) y tools/generate_placeholders.gd.
-## La clave de cada entidad es su carpeta relativa a assets/sprites/.
+## La clave de cada entidad es su carpeta relativa a assets/sprites/ (arte compartido) o a
+## assets/sprites/levels/<nivel>/ (arte propio de un nivel, marcado con "level").
 ## "color", "label", "shape", "gun" y "tint" solo afectan al placeholder generado.
 ## Todo el arte mira hacia la DERECHA; el código voltea con flip_h.
 
 const ROOT := "res://assets/sprites/"
+const LEVELS_ROOT := ROOT + "levels/"
+## Nivel cuyo arte se usa cuando el nivel actual no trae el suyo (editor, campo de pruebas)
+const DEFAULT_LEVEL := "level_01"
 
 const ENTITIES := {
 	"player": {
@@ -28,8 +32,9 @@ const ENTITIES := {
 			"dead": {"frames": 1, "fps": 1.0, "loop": false, "shape": "flat"},
 		},
 	},
-	# --- Enemigos ---
+	# --- Enemigos (arte propio del nivel 1) ---
 	"enemies/runner": {
+		"level": "level_01",
 		"size": Vector2i(24, 28), "anchor": "feet", "color": "d04848", "label": "R", "default": "run",
 		"anims": {
 			"run": {"frames": 4, "fps": 10.0, "loop": true, "shape": "walker"},
@@ -37,6 +42,7 @@ const ENTITIES := {
 		},
 	},
 	"enemies/turret": {
+		"level": "level_01",
 		"size": Vector2i(24, 24), "anchor": "feet", "color": "8a8aa8", "label": "T", "default": "idle",
 		"anims": {
 			"idle": {"frames": 1, "fps": 1.0, "loop": true, "shape": "turret"},
@@ -44,6 +50,7 @@ const ENTITIES := {
 		},
 	},
 	"enemies/flyer": {
+		"level": "level_01",
 		"size": Vector2i(28, 18), "anchor": "center", "color": "3fbfbf", "label": "F", "default": "fly",
 		"anims": {"fly": {"frames": 2, "fps": 8.0, "loop": true, "shape": "wing"}},
 	},
@@ -123,6 +130,16 @@ static func has_entity(entity: String) -> bool:
 
 static func get_spec(entity: String) -> Dictionary:
 	return ENTITIES.get(entity, {})
+
+
+static func level_dir(level_id: String) -> String:
+	return LEVELS_ROOT + level_id + "/"
+
+
+## Carpeta donde vive (o se genera) el arte base de una entidad
+static func home_dir(entity: String) -> String:
+	var level: String = get_spec(entity).get("level", "")
+	return (level_dir(level) if level != "" else ROOT) + entity + "/"
 
 
 static func get_anim_spec(entity: String, anim: String) -> Dictionary:

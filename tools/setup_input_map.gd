@@ -16,6 +16,8 @@ func _initialize() -> void:
 	_action("jump", [KEY_K, KEY_Z, KEY_SPACE], [JOY_BUTTON_A], [])
 	_action("shoot", [KEY_J, KEY_X], [JOY_BUTTON_X, JOY_BUTTON_B], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_action("lock_aim", [KEY_L, KEY_C, KEY_SHIFT], [JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER], [])
+	# START: empezar desde el título / pantallas
+	_action("start", [KEY_ENTER, KEY_KP_ENTER], [JOY_BUTTON_START], [])
 	# Depuración: cambiar de arma
 	_action("debug_next_weapon", [KEY_TAB], [JOY_BUTTON_BACK], [])
 	var err := ProjectSettings.save()

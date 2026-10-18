@@ -35,7 +35,7 @@ func _initialize() -> void:
 
 func _generate_entity(entity: String) -> void:
 	var spec: Dictionary = Catalog.get_spec(entity)
-	var dir: String = Catalog.ROOT + entity
+	var dir: String = Catalog.home_dir(entity).trim_suffix("/")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
 	var anims: Dictionary = spec.get("anims", {})
 	for anim_name in anims:
@@ -235,8 +235,9 @@ func _draw_gun(img: Image, from: Vector2i, dir: Vector2) -> void:
 # --- Tileset (tira de 5 tiles 16x16, ver TilesetFactory.Tile) -------------
 
 func _generate_tiles() -> void:
-	var path := Catalog.ROOT + "tiles/tileset.png"
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(Catalog.ROOT + "tiles"))
+	var tiles_dir := Catalog.level_dir(Catalog.DEFAULT_LEVEL) + "tiles"
+	var path := tiles_dir + "/tileset.png"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(tiles_dir))
 	if not _force and FileAccess.file_exists(path):
 		_skipped += 1
 		return
@@ -284,7 +285,7 @@ func _generate_tiles() -> void:
 # --- Fondos parallax (384x216) ---------------------------------------------
 
 func _generate_backgrounds() -> void:
-	var dir := "res://assets/sprites/backgrounds"
+	var dir := Catalog.level_dir(Catalog.DEFAULT_LEVEL) + "backgrounds"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
 	var w := 384
 	var h := 216

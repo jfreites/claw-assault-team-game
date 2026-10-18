@@ -1,8 +1,8 @@
-# Contra But Cats
+# C.A.T. — Operation Island
 
-Vertical slice de un run & gun 2D estilo Contra protagonizado por un gato guerrero. Godot 4.3+ (probado con 4.7.2), solo GDScript, sin plugins.
+**C.A.T. (Claw Assault Team): Operation Island.** Vertical slice de un run & gun 2D estilo Contra protagonizado por un gato guerrero. Toda la acción ocurre en una misma isla, dividida en niveles (stages): playa, selva, cuevas, base… Godot 4.3+ (probado con 4.7.2), solo GDScript, sin plugins.
 
-> Estado: etapas 1–5 (jugador, armas, enemigos, pickups, poderes y nivel 1 "La isla"). El jefe y el pulido (HUD final, game feel, pantallas) llegan en las etapas 6 y 7.
+> Estado: etapas 1–5 (jugador, armas, enemigos, pickups, poderes y Nivel 1: Playa de desembarco) + pantalla de título y lista de niveles. El jefe y el pulido (HUD final, game feel, pantallas) llegan en las etapas 6 y 7.
 
 ## Ejecutar
 
@@ -12,9 +12,9 @@ Abre la carpeta en Godot y presiona F5, o desde la terminal:
 godot --path .
 ```
 
-La escena principal es `scenes/levels/level_1.tscn` ("La isla"). El campo de pruebas con una muestra de todo sigue en `scenes/levels/test_range.tscn` (ábrelo y presiona F6).
+El juego arranca en la pantalla de título (`scenes/ui/title_screen.tscn`): **START** (Enter / START del gamepad, también saltar o disparar) empieza el Nivel 1. El nivel se puede abrir directo con `scenes/levels/level_01.tscn` + F6. El campo de pruebas con una muestra de todo sigue en `scenes/levels/test_range.tscn`.
 
-**La isla**: el gato cae del cielo a la playa → tramo plano con corredores → plataformas sobre agua y abismo con voladores → torretas y cápsula de arma (spread) → zona de checkpoint (bandera) → arena del jefe con cámara bloqueada. El jefe llega en la etapa 6; por ahora la arena está vacía.
+**Nivel 1: Playa de desembarco**: el gato cae del cielo a la playa → tramo plano con corredores → plataformas sobre agua y abismo con voladores → torretas y cápsula de arma (spread) → zona de checkpoint (bandera) → arena del jefe con cámara bloqueada. El jefe llega en la etapa 6; por ahora la arena está vacía.
 
 ## Controles
 
@@ -26,6 +26,7 @@ La escena principal es `scenes/levels/level_1.tscn` ("La isla"). El campo de pru
 | Saltar | K / Z / Espacio | A |
 | Disparar (mantener) | J / X | X / B / gatillo der. |
 | Fijar dirección de disparo | L / C / Shift | LB / RB |
+| Empezar (título / victoria) | Enter | START |
 | (Debug) cambiar de arma | Tab | Select/Back |
 
 - Abajo + saltar sobre una plataforma de madera = bajar a través de ella.
@@ -71,6 +72,19 @@ Para reemplazar arte, ver [ASSETS.md](ASSETS.md).
 
 ## Niveles
 
+La campaña es una lista de `LevelInfo` en `resources/levels/level_list.tres`, que recorre el autoload `LevelManager`:
+
+- `LevelManager.start_game()` empieza en el primer nivel (lo usa el título).
+- `LevelManager.complete_current_level()` pasa al siguiente o, si era el último, muestra la pantalla de victoria (`scenes/ui/victory_screen.tscn`). La llamará el jefe en la etapa 6; por ahora nada la dispara.
+
+**Agregar un nivel** (ej. selva):
+1. Crea `resources/levels/level_02_info.tres` (`LevelInfo`: número, título, `scene_path`, `art_dir = res://assets/sprites/levels/level_02`).
+2. Crea su layout `resources/levels/level_02_layout.tres` y su escena `scenes/levels/level_02.tscn` (duplica `level_01.tscn` y cambia `info` y `layout`).
+3. Súmalo al arreglo `levels` de `level_list.tres`.
+4. Pon su arte propio en `assets/sprites/levels/level_02/` (tileset, fondos, enemigos con otra piel). Lo que no tenga se toma del arte compartido o del nivel 1.
+
+### Layout ASCII
+
 Los niveles son texto ASCII (`resources/levels/*.tres`, recurso `LevelLayout`), editables en el inspector o con cualquier editor de texto. Cada carácter es un tile de 16 px:
 
 | Carácter | Significado |
@@ -82,14 +96,15 @@ Los niveles son texto ASCII (`resources/levels/*.tres`, recurso `LevelLayout`), 
 | `A` | Entrada a la arena del jefe: la cámara se bloquea en la pantalla que empieza en esa columna |
 | otros | Se buscan en `spawns`. En La isla: `R` corredor, `G` generador de corredores, `T` torreta, `F` volador, `C` checkpoint, cápsulas `N` catnip / `M` leche / `S` spread (`Y` estambre y `B` espina en el campo de pruebas) |
 
-Caer bajo el nivel mata. La cámara solo avanza; el fondo es un `ParallaxBackdrop` con dos capas (`assets/sprites/backgrounds/far.png` y `near.png`). La música se pide con el campo `music` del nivel (`AudioManager.play_music`).
+Caer bajo el nivel mata. La cámara solo avanza; el fondo es un `ParallaxBackdrop` con dos capas (`backgrounds/far.png` y `near.png` dentro de la carpeta de arte del nivel). La música se pide con el campo `music` del nivel (`AudioManager.play_music`).
 
 ## Estructura
 
 ```
-assets/sprites/…        arte (placeholders generados)      tools/          generador, input map, smoke test
+assets/sprites/…        arte compartido (placeholders)     tools/          generador, input map, tests
+assets/sprites/levels/   arte propio de cada nivel          scenes/ui/      título, victoria, HUD
 assets/audio/{sfx,music} audio (AudioManager.play_sfx)     resources/      WeaponData, EnemyStats, PlayerConfig, niveles
 scenes/                  escenas por tipo                   scripts/        código (autoload, player, weapons, enemies…)
 ```
 
-Audio: `AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`, `pickup_weapon`, `power_catnip`, `power_milk`, `shield_break`, `land`, `checkpoint`. Música: `level_1`.
+Audio: `AudioManager.play_sfx("jump")` reproduce `assets/audio/sfx/jump.(wav|ogg|mp3)` si existe; si no, silencio. Hooks actuales: `jump`, `shoot`, `shoot_yarn`, `shoot_fishbone`, `shoot_spread`, `bounce`, `player_hurt`, `enemy_hit`, `enemy_die`, `enemy_shoot`, `enemy_bomb`, `pickup_weapon`, `power_catnip`, `power_milk`, `shield_break`, `land`, `checkpoint`, `menu_start`. Música: `level_01`.

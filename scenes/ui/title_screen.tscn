@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu_screen.gd" id="1_menu"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 384.0
+offset_bottom = 216.0
+script = ExtResource("1_menu")
+on_start = 0
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 384.0
+offset_bottom = 216.0
+color = Color(0.06, 0.08, 0.16, 1)
+
+[node name="Logo" type="Label" parent="."]
+layout_mode = 0
+offset_top = 34.0
+offset_right = 384.0
+offset_bottom = 98.0
+theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 48
+text = "C.A.T."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Team" type="Label" parent="."]
+layout_mode = 0
+offset_top = 96.0
+offset_right = 384.0
+offset_bottom = 110.0
+theme_override_colors/font_color = Color(0.75, 0.8, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 8
+text = "CLAW ASSAULT TEAM"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 0
+offset_top = 112.0
+offset_right = 384.0
+offset_bottom = 136.0
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
+text = "OPERATION ISLAND"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Prompt" type="Label" parent="."]
+layout_mode = 0
+offset_top = 164.0
+offset_right = 384.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 8
+text = "PRESIONA START"
+horizontal_alignment = 1
+vertical_alignment = 1
