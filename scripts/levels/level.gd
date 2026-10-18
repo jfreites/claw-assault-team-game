@@ -1,17 +1,25 @@
 class_name Level
 extends Node2D
 ## Nivel construido desde un LevelLayout: tiles, spawns, zonas mortales,
-## cámara y flujo de vidas (reaparición en checkpoint / game over).
+## cámara, arena del jefe y flujo de vidas (reaparición en checkpoint / game over).
+
+signal boss_arena_entered
 
 @export var layout: LevelLayout
 @export var player_scene: PackedScene
 @export var respawn_delay := 0.5
+## El gato cae del cielo al empezar o reaparecer
+@export var intro_drop := true
+## Nombre de la música en assets/audio/music (vacío = sin música)
+@export var music := ""
 
 var player: Player
 var level_size := Vector2.ZERO
 
 var _player_start := Vector2(32, 160)
 var _game_over := false
+var _arena_x := -1.0
+var _arena_reached := false
 
 @onready var tiles: TileMapLayer = $Tiles
 @onready var entities: Node2D = $Entities
@@ -24,6 +32,10 @@ func _ready() -> void:
 	_build_from_layout()
 	_setup_camera()
 	_spawn_player()
+	if _arena_x >= 0.0:
+		_add_arena_trigger()
+	if music != "":
+		AudioManager.play_music(music)
 
 
 func _physics_process(_delta: float) -> void:
@@ -56,12 +68,17 @@ func _build_from_layout() -> void:
 				"#":
 					var top := layout.char_at(x, y - 1) != "#"
 					_set_tile(cell, TilesetFactory.Tile.GROUND_TOP if top else TilesetFactory.Tile.GROUND_FILL)
+				":":
+					var sand_top := layout.char_at(x, y - 1) != ":"
+					_set_tile(cell, TilesetFactory.Tile.SAND_TOP if sand_top else TilesetFactory.Tile.SAND_FILL)
 				"=":
 					_set_tile(cell, TilesetFactory.Tile.PLATFORM)
 				"~":
 					_set_tile(cell, TilesetFactory.Tile.WATER_TOP if is_water_top else TilesetFactory.Tile.WATER_FILL)
 				"P":
 					_player_start = feet
+				"A":
+					_arena_x = x * ts
 				".", " ":
 					pass
 				_:
@@ -119,7 +136,38 @@ func _spawn_player() -> void:
 		GameState.respawning = false
 	camera.target = player
 	camera.snap_to_target()
+	if intro_drop:
+		player.global_position.y = camera.get_view_rect().position.y - 24.0
+		player.start_intro_drop()
 	hud.bind_player(player)
+
+
+## La arena ocupa una pantalla desde la columna 'A'; al entrar se bloquea la cámara
+func _add_arena_trigger() -> void:
+	var trigger := Area2D.new()
+	trigger.name = "ArenaTrigger"
+	trigger.collision_layer = 0
+	trigger.collision_mask = Layers.PLAYER
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(layout.tile_size, level_size.y)
+	shape.shape = rect
+	shape.position = Vector2(_arena_x + layout.tile_size * 1.5, level_size.y * 0.5)
+	trigger.add_child(shape)
+	trigger.body_entered.connect(_on_arena_trigger)
+	add_child(trigger)
+
+
+func _on_arena_trigger(body: Node2D) -> void:
+	if _arena_reached or not body is Player:
+		return
+	_arena_reached = true
+	camera.lock_at_x(_arena_x + camera.get_view_size().x * 0.5)
+	boss_arena_entered.emit()
+
+
+func is_in_boss_arena() -> bool:
+	return _arena_reached
 
 
 func _on_player_died() -> void:

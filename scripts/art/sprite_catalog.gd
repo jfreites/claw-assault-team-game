@@ -76,6 +76,14 @@ const ENTITIES := {
 		"size": Vector2i(16, 14), "anchor": "center", "color": "f4f4f4", "label": "L", "default": "idle",
 		"anims": {"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "pill"}},
 	},
+	# --- Props del nivel ---
+	"props/checkpoint": {
+		"size": Vector2i(16, 32), "anchor": "feet", "color": "ff5a3c", "default": "idle",
+		"anims": {
+			"idle": {"frames": 1, "fps": 1.0, "loop": true, "shape": "flag_down"},
+			"active": {"frames": 2, "fps": 6.0, "loop": true, "shape": "flag_up"},
+		},
+	},
 	# --- Efectos ---
 	"fx/shield": {
 		"size": Vector2i(32, 32), "anchor": "center", "color": "ffe066", "default": "idle",

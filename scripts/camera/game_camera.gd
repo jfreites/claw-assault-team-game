@@ -7,12 +7,15 @@ extends Camera2D
 @export var follow_offset_x := 24.0
 ## Distancia mínima del jugador a los bordes de la pantalla
 @export var edge_margin := 6.0
+## Velocidad con la que la cámara se desliza hasta el punto de bloqueo
+@export var lock_speed := 140.0
 
 var target: Node2D
 
 var _max_x := -INF
 var _locked := false
 var _lock_x := 0.0
+var _locked_x := 0.0
 var _shake_strength := 0.0
 var _shake_duration := 0.0
 var _shake_time := 0.0
@@ -27,6 +30,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if target and not _locked:
 		_max_x = maxf(_max_x, target.global_position.x + follow_offset_x)
+	if _locked:
+		_locked_x = move_toward(_locked_x, _lock_x, lock_speed * delta)
 	_update_position()
 	_update_shake(delta)
 
@@ -43,11 +48,12 @@ func snap_to_target() -> void:
 func lock_at_x(center_x: float) -> void:
 	_locked = true
 	_lock_x = center_x
+	_locked_x = global_position.x
 
 
 func unlock() -> void:
 	_locked = false
-	_max_x = maxf(_max_x, _lock_x)
+	_max_x = maxf(_max_x, _locked_x)
 
 
 func is_locked() -> bool:
@@ -80,7 +86,7 @@ static func shake_current(from: Node, strength: float, duration: float) -> void:
 
 func _update_position() -> void:
 	var half := get_view_size() * 0.5
-	var x := _lock_x if _locked else _max_x
+	var x := _locked_x if _locked else _max_x
 	if x == -INF:
 		x = global_position.x
 	x = clampf(x, limit_left + half.x, maxf(limit_right - half.x, limit_left + half.x))

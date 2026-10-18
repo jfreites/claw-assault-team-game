@@ -10,6 +10,7 @@
 script = ExtResource("1_level")
 layout = ExtResource("2_layout")
 player_scene = ExtResource("3_player")
+intro_drop = false
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 

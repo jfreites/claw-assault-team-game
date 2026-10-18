@@ -105,6 +105,10 @@ Tira horizontal de tiles de **16×16** en este orden (índice = columna):
 | 2 | Plataforma one-way | 4 px superiores, one-way |
 | 3 | Superficie de agua | ninguna (zona mortal) |
 | 4 | Agua profunda | ninguna |
+| 5 | Arena con superficie (playa) | sólido (world) |
+| 6 | Relleno de arena | sólido (world) |
+
+Si tu tileset trae menos tiles, solo se crean los que existen.
 
 El `TileSet` se construye en código (`scripts/levels/tileset_factory.gd`), así que basta con reemplazar el PNG.
 
@@ -122,6 +126,22 @@ Anclaje `center`. El sprite de cada pickup lo indica el campo `pickup_sprite` de
 | `pickups/power_milk` | 16×14 | `idle` (2 @ 4) | Leche |
 
 Hitbox del pickup: 14×14 fijo (`scenes/pickups/pickup.tscn`).
+
+### Fondos — `assets/sprites/backgrounds/`
+Imágenes sueltas de **384×216** (una pantalla) que se repiten en horizontal. Las rutas y velocidades están en el nodo `Backdrop` (`ParallaxBackdrop`) de cada nivel.
+
+| Archivo | Factor de scroll | Contenido |
+|---|---|---|
+| `far.png` | 0.15 | Cielo, sol, islas lejanas, mar (opaca) |
+| `near.png` | 0.45 | Palmeras y arbustos (transparente arriba) |
+
+El borde izquierdo y el derecho deben empalmar para que la repetición no se note.
+
+### Props — `assets/sprites/props/<nombre>/`
+
+| Entidad | Frame | Anclaje | Animaciones | Uso |
+|---|---|---|---|---|
+| `props/checkpoint` | 16×32 | feet | `idle` (1, bandera abajo), `active` (2 @ 6, izada) | Checkpoint (hitbox 16×64) |
 
 ### Efectos — `assets/sprites/fx/<nombre>/`
 

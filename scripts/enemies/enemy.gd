@@ -113,6 +113,13 @@ func _center_offset() -> Vector2:
 	return Vector2(0, -10)
 
 
+## Activa al enemigo aunque esté fuera de pantalla (spawners)
+func force_activate() -> void:
+	if not active and not _dead:
+		active = true
+		_on_activated.call_deferred()
+
+
 # --- Interno --------------------------------------------------------------
 
 func _check_activation() -> void:

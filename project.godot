@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Contra But Cats"
 config/description="Vertical slice run & gun protagonizado por un gato guerrero."
-run/main_scene="res://scenes/levels/test_range.tscn"
+run/main_scene="res://scenes/levels/level_1.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

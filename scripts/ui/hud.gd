@@ -10,15 +10,23 @@ var _player: Player
 @onready var message: Label = $Message
 
 
+var _message_time := 0.0
+
+
 func _ready() -> void:
+	add_to_group("hud")
 	message.visible = false
 	power.text = ""
 	GameState.lives_changed.connect(_on_lives_changed)
 	_refresh()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_refresh_powers()
+	if _message_time > 0.0:
+		_message_time -= delta
+		if _message_time <= 0.0:
+			message.visible = false
 
 
 func bind_player(p: Player) -> void:
@@ -32,6 +40,13 @@ func bind_player(p: Player) -> void:
 func show_message(text: String) -> void:
 	message.text = text
 	message.visible = true
+	_message_time = 0.0
+
+
+## Mensaje central que se oculta solo
+func flash_message(text: String, seconds: float) -> void:
+	show_message(text)
+	_message_time = seconds
 
 
 func _on_lives_changed(_lives: int) -> void:

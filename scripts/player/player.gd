@@ -4,6 +4,7 @@ extends CharacterBody2D
 ## apuntado en 8 direcciones y bajada por plataformas one-way.
 
 signal died
+signal landed_from_intro
 signal state_changed(new_state: int)
 
 enum State { IDLE, RUN, JUMP, FALL, PRONE, HURT, DEAD }
@@ -29,6 +30,7 @@ var _drop_time := 0.0
 var _invulnerable := 0.0
 var _jumped := false
 var _air_jumps_used := 0
+var _intro_drop := false
 var _died_emitted := false
 
 @onready var sprite: EntitySprite = $Sprite
@@ -103,6 +105,9 @@ func _physics_control(delta: float) -> void:
 		aim = _compute_aim(h, up, down, on_floor)
 
 	move_and_slide()
+
+	if _intro_drop and is_on_floor():
+		_end_intro_drop()
 
 	if _pressed("shoot"):
 		weapon_holder.try_fire(get_muzzle_position(), aim)
@@ -204,6 +209,23 @@ func _physics_dead(delta: float) -> void:
 	if not _died_emitted and _state_time >= config.dead_time:
 		_died_emitted = true
 		died.emit()
+
+
+## Entrada del nivel: el gato cae del cielo sin control hasta aterrizar
+func start_intro_drop() -> void:
+	_intro_drop = true
+	input_enabled = false
+	velocity = Vector2.ZERO
+	_set_state(State.FALL)
+
+
+func _end_intro_drop() -> void:
+	_intro_drop = false
+	input_enabled = true
+	AudioManager.play_sfx("land")
+	Fx.burst(self, global_position, Color(0.95, 0.88, 0.6), 10, 60.0, 0.3)
+	GameCamera.shake_current(self, 1.5, 0.12)
+	landed_from_intro.emit()
 
 
 ## Aplica el contenido de un pickup: arma nueva o poder temporal

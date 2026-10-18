@@ -26,6 +26,7 @@ func _initialize() -> void:
 	for entity in Catalog.ENTITIES:
 		_generate_entity(entity)
 	_generate_tiles()
+	_generate_backgrounds()
 	print("Placeholders: %d creados, %d existentes respetados%s" % [_created, _skipped, " (--force)" if _force else ""])
 	quit()
 
@@ -192,6 +193,15 @@ func _draw_shape(img: Image, shape: String, c: Color, f: int, n: int) -> Diction
 			_rect(img, w - 1 - int(w * 0.3), wy, int(w * 0.3), 4, c.lightened(0.2))
 			_rect(img, center.x + 3, center.y - 1, 2, 2, light)
 			return {"body": Rect2i(center.x - int(w * 0.28), center.y - int(h * 0.32), int(w * 0.56), int(h * 0.64))}
+		"flag_down", "flag_up":
+			# Checkpoint: mástil con bandera abajo o izada (ondea por frame)
+			_rect(img, 2, 2, 2, h - 2, Color("d8d8d8"))
+			_rect(img, 0, h - 3, 7, 3, Color("707070"))
+			var fy := h - 12 if shape == "flag_down" else 3
+			var wave := f % 2
+			_rect(img, 4, fy + wave, w - 5, 7, c)
+			_rect(img, w - 3, fy + 1 - wave, 2, 5, c.darkened(0.2))
+			return {"body": Rect2i()}
 		"pill":
 			# Cápsula de pickup: caja redondeada con brillo que se mueve
 			_rect(img, 1, 0, w - 2, h, c)
@@ -231,7 +241,7 @@ func _generate_tiles() -> void:
 		_skipped += 1
 		return
 	var t := 16
-	var img := Image.create(t * 5, t, false, Image.FORMAT_RGBA8)
+	var img := Image.create(t * 7, t, false, Image.FORMAT_RGBA8)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	var dirt := Color("8a5a32")
@@ -261,7 +271,62 @@ func _generate_tiles() -> void:
 	_rect(img, 4 * t, 0, t, t, water.darkened(0.2))
 	for k in 4:
 		img.set_pixel(4 * t + rng.randi_range(1, 14), rng.randi_range(1, 14), water.lightened(0.2))
+	# 5: arena con superficie, 6: relleno de arena
+	var sand := Color("e8cf8a")
+	for i in [5, 6]:
+		_rect(img, i * t, 0, t, t, sand.darkened(0.08 if i == 6 else 0.0))
+		for k in 7:
+			img.set_pixel(i * t + rng.randi_range(1, 14), rng.randi_range(2, 14), sand.darkened(0.25))
+	_rect(img, 5 * t, 0, t, 2, sand.lightened(0.35))
 	_save(img, path)
+
+
+# --- Fondos parallax (384x216) ---------------------------------------------
+
+func _generate_backgrounds() -> void:
+	var dir := "res://assets/sprites/backgrounds"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+	var w := 384
+	var h := 216
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var far_path := dir + "/far.png"
+	if _force or not FileAccess.file_exists(far_path):
+		# Capa lejana: cielo en degradé, sol, islas lejanas y mar
+		var far := Image.create(w, h, false, Image.FORMAT_RGBA8)
+		var top := Color("4d8fd6")
+		var bottom := Color("a8dcf5")
+		for y in h:
+			_rect(far, 0, y, w, 1, top.lerp(bottom, float(y) / h))
+		_circle(far, Vector2i(300, 46), 14, Color("fff2a8"))
+		for k in 6:
+			var cx := rng.randi_range(0, w)
+			_ellipse(far, Vector2i(cx, 128), rng.randi_range(30, 70), rng.randi_range(10, 22), Color("6a9a8c"))
+		_rect(far, 0, 128, w, h - 128, Color("2f78c4"))
+		for k in 40:
+			_rect(far, rng.randi_range(0, w), rng.randi_range(132, h), rng.randi_range(3, 8), 1, Color("5d9ad8"))
+		PixelFont.draw_text(far, "FAR", Vector2i(2, 2), Color(1, 1, 1, 0.6))
+		_save(far, far_path)
+	var near_path := dir + "/near.png"
+	if _force or not FileAccess.file_exists(near_path):
+		# Capa cercana: palmeras y arbustos (transparente arriba)
+		var near := Image.create(w, h, false, Image.FORMAT_RGBA8)
+		var trunk := Color("6b4a2b")
+		var leaf := Color("2e8b4a")
+		for k in 5:
+			var x := 30 + k * 76 + rng.randi_range(-10, 10)
+			var top_y := rng.randi_range(70, 110)
+			for y in range(top_y, h):
+				_rect(near, x + int(sin(y * 0.05) * 3.0), y, 4, 1, trunk)
+			for a in 5:
+				var dir_v := Vector2.RIGHT.rotated(PI + a * PI / 4.0)
+				for i in 18:
+					var p := Vector2(x + 2, top_y) + dir_v * i + Vector2(0, i * i * 0.03)
+					_rect(near, int(p.x), int(p.y), 3, 2, leaf)
+		for k in 14:
+			_ellipse(near, Vector2i(rng.randi_range(0, w), h - 8), rng.randi_range(14, 26), rng.randi_range(8, 14), leaf.darkened(0.2))
+		PixelFont.draw_text(near, "NEAR", Vector2i(2, 10), Color(1, 1, 1, 0.6))
+		_save(near, near_path)
 
 
 # --- Utilidades de dibujo -------------------------------------------------

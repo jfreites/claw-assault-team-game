@@ -1,8 +1,9 @@
 class_name LevelLayout
 extends Resource
 ## Nivel descrito como texto ASCII: cada carácter es una celda de `tile_size` px.
-##   '#' suelo sólido      '=' plataforma one-way     '~' agua (mortal)
-##   'P' inicio del jugador '.' o espacio = vacío
+##   '#' suelo sólido      ':' arena (sólida)          '=' plataforma one-way
+##   '~' agua (mortal)      'P' inicio del jugador      'A' entrada a la arena del jefe
+##   '.' o espacio = vacío
 ## Cualquier otro carácter se busca en `spawns` (carácter → escena) y se instancia
 ## con los pies en el borde inferior de la celda.
 
