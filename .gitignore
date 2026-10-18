@@ -1,0 +1,5 @@
+# Caché de Godot 4
+.godot/
+/android/
+*.tmp
+.DS_Store

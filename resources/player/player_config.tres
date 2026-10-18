@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PlayerConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player_config.gd" id="1_cfg"]
+
+[resource]
+script = ExtResource("1_cfg")
+run_speed = 90.0
+acceleration = 1600.0
+gravity = 900.0
+max_fall_speed = 380.0
+jump_velocity = -320.0
+jump_cut_multiplier = 0.4
+coyote_time = 0.1
+jump_buffer_time = 0.1
+drop_through_time = 0.25
+hurt_time = 0.45
+hurt_knockback = Vector2(-70, -220)
+dead_time = 1.2
+respawn_invulnerability = 2.0
