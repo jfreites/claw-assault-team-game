@@ -14,6 +14,8 @@ enum State { IDLE, RUN, JUMP, FALL, PRONE, HURT, DEAD }
 var speed_multiplier := 1.0
 var jump_multiplier := 1.0
 var extra_air_jumps := 0
+## Color que aplican los poderes activos; parpadea para que se note
+var power_tint := Color.WHITE
 
 var state: State = State.IDLE
 var facing := 1
@@ -291,6 +293,10 @@ func _update_visuals() -> void:
 		State.DEAD:
 			sprite.play_safe(&"dead", &"prone")
 	shield_sprite.visible = powers.shield_hits > 0 and is_alive()
+	if power_tint != Color.WHITE:
+		sprite.modulate = power_tint if int(Time.get_ticks_msec() / 120.0) % 2 == 0 else power_tint.lerp(Color.WHITE, 0.5)
+	else:
+		sprite.modulate = Color.WHITE
 	# Parpadeo durante la invulnerabilidad
 	sprite.visible = _invulnerable <= 0.0 or int(_invulnerable * 20.0) % 2 == 0
 

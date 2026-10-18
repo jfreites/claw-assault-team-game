@@ -21,6 +21,7 @@ func activate(power: PowerUpData) -> void:
 		shield_changed.emit(shield_hits)
 	_apply()
 	AudioManager.play_sfx(power.sfx)
+	Fx.burst(player, player.global_position + Vector2(0, -14), power.tint, 14, 90.0, 0.4)
 	if is_new:
 		power_started.emit(power)
 
@@ -84,7 +85,9 @@ func _apply() -> void:
 	var jump := 1.0
 	var damage := 1.0
 	var air_jumps := 0
+	var tint := Color.WHITE
 	for power in _remaining:
+		tint *= power.tint
 		speed *= power.speed_multiplier
 		fire_rate *= power.fire_rate_multiplier
 		jump *= power.jump_multiplier
@@ -95,3 +98,4 @@ func _apply() -> void:
 	player.extra_air_jumps = air_jumps
 	player.weapon_holder.fire_rate_multiplier = fire_rate
 	player.weapon_holder.damage_multiplier = damage
+	player.power_tint = tint

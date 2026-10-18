@@ -49,7 +49,8 @@ func try_fire(origin: Vector2, direction: Vector2) -> bool:
 		return false
 	if current.max_on_screen > 0:
 		_active = _active.filter(func(b): return is_instance_valid(b))
-		if _active.size() >= current.max_on_screen:
+		# Con más cadencia (catnip) también se permiten más balas en pantalla
+		if _active.size() >= ceili(current.max_on_screen * fire_rate_multiplier):
 			return false
 	_cooldown = 1.0 / (current.fire_rate * fire_rate_multiplier)
 	_active.append_array(Bullet.spawn_pattern(current, origin, direction, player_owned, self, damage_multiplier))

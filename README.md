@@ -31,7 +31,7 @@ La escena principal es `scenes/levels/test_range.tscn`.
 - Mantén *fijar dirección* para caminar sin cambiar hacia dónde disparas.
 - Un golpe = una vida. Con 3 vidas; al perder una reapareces en el último checkpoint.
 - Dispara a las cápsulas voladoras para que suelten un arma o un poder; tócalo para recogerlo.
-- Poderes: **Catnip** (más velocidad y cadencia, 10 s) y **Leche** (escudo que absorbe un golpe, 20 s). El HUD muestra el tiempo restante.
+- Poderes: **Catnip** (+40 % velocidad y +80 % cadencia, 10 s; el gato parpadea en verde) y **Leche** (escudo que absorbe un golpe, 20 s). El HUD muestra el tiempo restante.
 
 ## Herramientas
 
@@ -61,7 +61,7 @@ Para reemplazar arte, ver [ASSETS.md](ASSETS.md).
 4. Agrega su entrada al catálogo de sprites y regenera placeholders.
 5. Para colocarlo en un nivel, asígnale un carácter en `spawns` del `LevelLayout` y úsalo en el mapa ASCII.
 
-**Un poder**: crea un `.tres` en `resources/powerups/` con script `PowerUpData` y ajusta `duration` y los modificadores (`speed_multiplier`, `fire_rate_multiplier`, `jump_multiplier`, `damage_multiplier`, `shield_hits`, `extra_air_jumps` para salto doble). Los modificadores de varios poderes activos se combinan. Escucha `power_started` / `power_ended` en el `PowerUpController` del jugador (`$PowerUps`).
+**Un poder**: crea un `.tres` en `resources/powerups/` con script `PowerUpData` y ajusta `duration`, `tint` (color del gato mientras dura) y los modificadores (`speed_multiplier`, `fire_rate_multiplier`, `jump_multiplier`, `damage_multiplier`, `shield_hits`, `extra_air_jumps` para salto doble). Los modificadores de varios poderes activos se combinan. Escucha `power_started` / `power_ended` en el `PowerUpController` del jugador (`$PowerUps`).
 
 **Una cápsula con otro contenido**: crea una escena heredada de `scenes/pickups/capsule.tscn` (como `capsule_yarn.tscn`) y cambia su `item` a cualquier `WeaponData` o `PowerUpData`. Los enemigos también pueden soltar pickups con `drop_chance` y `drop_table` en su `EnemyStats`.
 

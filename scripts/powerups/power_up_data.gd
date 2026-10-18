@@ -11,6 +11,8 @@ extends Resource
 ## Carpeta del sprite del pickup relativa a assets/sprites
 @export var pickup_sprite := "pickups/power_catnip"
 @export var sfx := "power_up"
+## Tinte del personaje mientras el poder está activo (blanco = sin tinte)
+@export var tint := Color.WHITE
 
 @export_group("Modificadores")
 @export var speed_multiplier := 1.0

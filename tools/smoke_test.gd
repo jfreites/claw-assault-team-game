@@ -215,8 +215,28 @@ func _test_pickups() -> void:
 	player.powers.power_started.connect(func(p): events.append("start:" + p.display_name))
 	player.powers.power_ended.connect(func(p): events.append("end:" + p.display_name))
 	var catnip: PowerUpData = load("res://resources/powerups/catnip.tres")
+	player.weapon_holder.reset_to_default()
+	var normal_shots := await _count_shots(60)
+	var normal_x := player.global_position.x
+	Input.action_press("move_right")
+	await _frames(30)
+	Input.action_release("move_right")
+	var normal_run := player.global_position.x - normal_x
+	_teleport(Vector2(72 * 16, 11 * 16))
+	await _frames(20)
 	player.collect(catnip)
 	await _frames(2)
+	_check(player.sprite.modulate != Color.WHITE, "el catnip tiñe al personaje")
+	var catnip_shots := await _count_shots(60)
+	var catnip_x := player.global_position.x
+	Input.action_press("move_right")
+	await _frames(30)
+	Input.action_release("move_right")
+	var catnip_run := player.global_position.x - catnip_x
+	_check(catnip_shots >= normal_shots * 1.5, "catnip: más disparos por segundo (%d → %d)" % [normal_shots, catnip_shots])
+	_check(catnip_run >= normal_run * 1.3, "catnip: corre más rápido (%.0f → %.0f px en 0.5 s)" % [normal_run, catnip_run])
+	_teleport(Vector2(72 * 16, 11 * 16))
+	await _frames(20)
 	_check(events.has("start:Catnip"), "señal power_started del catnip")
 	_check(is_equal_approx(player.speed_multiplier, catnip.speed_multiplier) and is_equal_approx(player.weapon_holder.fire_rate_multiplier, catnip.fire_rate_multiplier), "catnip sube velocidad y cadencia")
 	_check(level.hud.power.text.contains("CATNIP"), "el HUD muestra el poder y su tiempo (%s)" % level.hud.power.text)
@@ -244,6 +264,18 @@ func _test_pickups() -> void:
 	await _frames(5)
 	_check(_pickups().size() == before + 1, "un enemigo con drop_chance suelta pickup")
 	await _frames(70)
+
+
+func _count_shots(frames: int) -> int:
+	var shots := [0]
+	var cb := func(_w): shots[0] += 1
+	player.weapon_holder.fired.connect(cb)
+	Input.action_press("shoot")
+	await _frames(frames)
+	Input.action_release("shoot")
+	player.weapon_holder.fired.disconnect(cb)
+	await _frames(60)
+	return shots[0]
 
 
 func _pickups() -> Array:
