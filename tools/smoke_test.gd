@@ -13,6 +13,9 @@ var player: Player
 func _ready() -> void:
 	level = LEVEL.instantiate()
 	add_child(level)
+	# Las pruebas de movimiento se hacen sin los enemigos del nivel
+	for e in get_tree().get_nodes_in_group("enemies"):
+		e.queue_free()
 	await _frames(30)
 	player = level.player
 	await _test_player()
@@ -66,6 +69,7 @@ func _test_player() -> void:
 	_check(player.global_position.y > on_platform_y + 20, "bajó a través de la plataforma (y=%.1f)" % player.global_position.y)
 
 	await _test_weapons()
+	await _test_enemies()
 
 	# Agua: muerte instantánea
 	_teleport(Vector2(34 * 16 + 8, 10 * 16))
@@ -107,6 +111,82 @@ func _test_weapons() -> void:
 	_check(_bullets().size() == 3, "spread dispara 3 balas (%d)" % _bullets().size())
 	await _frames(60)
 	holder.reset_to_default()
+
+
+func _test_enemies() -> void:
+	_teleport(Vector2(72 * 16, 11 * 16))
+	await _frames(20)
+	player.start_invulnerability(100.0)
+	player.facing = 1
+	player.aim = Vector2.RIGHT
+	var hits := []
+	# Se guarda el tipo de fuente al momento del golpe (la bala puede liberarse luego)
+	player.hurtbox.hurt.connect(func(_d, src): hits.append("enemy_bullet" if src is Bullet and not src.from_player else ("contact" if not src is Bullet else "other")))
+	var ground := player.global_position.y
+
+	# Corredor: se acerca y el contacto daña
+	var runner := _spawn("res://scenes/enemies/runner.tscn", Vector2(player.global_position.x + 120, ground))
+	await _frames(20)
+	var rx := runner.global_position.x
+	await _frames(40)
+	_check(is_instance_valid(runner) and runner.global_position.x < rx - 20, "el corredor camina hacia el jugador")
+	await _frames(60)
+	_check(hits.has("contact"), "el contacto del corredor golpea al jugador")
+	var died := []
+	if is_instance_valid(runner):
+		runner.died.connect(func(e): died.append(e))
+		Input.action_press("shoot")
+		await _frames(30)
+		Input.action_release("shoot")
+	_check(not died.is_empty() or not is_instance_valid(runner), "el corredor muere con disparos")
+	await _frames(30)
+
+	# Torreta: dispara al jugador, hit-flash y espina perforante
+	hits.clear()
+	var t1 := _spawn("res://scenes/enemies/turret.tscn", Vector2(player.global_position.x + 110, ground))
+	var t2 := _spawn("res://scenes/enemies/turret.tscn", Vector2(player.global_position.x + 150, ground))
+	await _frames(150)
+	_check(hits.has("enemy_bullet"), "la torreta dispara y alcanza al jugador")
+	player.weapon_holder.equip(load("res://resources/weapons/fishbone.tres"))
+	player.facing = 1
+	Input.action_press("crouch")
+	await _frames(3)
+	var flashed := [false, false]
+	t1.damaged.connect(func(_a): flashed[0] = t1._flash > 0.0)
+	t2.damaged.connect(func(_a): flashed[1] = true)
+	Input.action_press("shoot")
+	await _frames(150)
+	_check(flashed[0], "hit-flash al recibir daño")
+	_check(flashed[1], "la espina atraviesa la primera torreta y daña la segunda")
+	Input.action_release("shoot")
+	Input.action_release("crouch")
+	_check(not is_instance_valid(t1) and not is_instance_valid(t2), "la espina perforante destruye ambas torretas")
+	player.weapon_holder.reset_to_default()
+
+	# Volador: onda sinusoidal y bombas
+	var flyer := _spawn("res://scenes/enemies/flyer.tscn", Vector2(player.global_position.x + 120, ground - 90))
+	await _frames(10)
+	var ys := []
+	var bomb_seen := false
+	for i in 120:
+		await get_tree().physics_frame
+		if is_instance_valid(flyer):
+			ys.append(flyer.global_position.y)
+		if _bullets().any(func(b): return not b.from_player and b.data.bullet_gravity > 0.0):
+			bomb_seen = true
+	_check(ys.size() > 0 and ys.max() - ys.min() > 20, "el volador oscila en vertical")
+	_check(bomb_seen, "el volador suelta bombas")
+	if is_instance_valid(flyer):
+		flyer.queue_free()
+	player.start_invulnerability(0.0)
+	await _frames(5)
+
+
+func _spawn(path: String, pos: Vector2) -> Enemy:
+	var e: Enemy = load(path).instantiate()
+	e.position = pos
+	level.entities.add_child(e)
+	return e
 
 
 func _bullets() -> Array:

@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/flyer_enemy.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/enemies/flyer.tres" id="2_stats"]
+[ext_resource type="Script" path="res://scripts/art/entity_sprite.gd" id="3_sprite"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="5_hitbox"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(18, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(20, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_contact"]
+size = Vector2(16, 8)
+
+[node name="Flyer" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+stats = ExtResource("2_stats")
+
+[node name="Body" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+script = ExtResource("3_sprite")
+entity = "enemies/flyer"
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("4_hurtbox")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="ContactHitbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_hitbox")
+
+[node name="Shape" type="CollisionShape2D" parent="ContactHitbox"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_contact")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(0, 6)

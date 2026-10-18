@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_stats.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/weapons/enemy/enemy_shot.tres" id="2_weapon"]
+
+[resource]
+script = ExtResource("1_script")
+max_health = 6
+contact_damage = 1
+score = 300
+weapon = ExtResource("2_weapon")
+fire_interval = 1.8
+first_shot_delay = 0.6
+fire_range = 240.0
+aim_directions = 16

@@ -28,6 +28,25 @@ const ENTITIES := {
 			"dead": {"frames": 1, "fps": 1.0, "loop": false, "shape": "flat"},
 		},
 	},
+	# --- Enemigos ---
+	"enemies/runner": {
+		"size": Vector2i(24, 28), "anchor": "feet", "color": "d04848", "label": "R", "default": "run",
+		"anims": {
+			"run": {"frames": 4, "fps": 10.0, "loop": true, "shape": "walker"},
+			"fall": {"frames": 1, "fps": 1.0, "loop": true, "shape": "walker"},
+		},
+	},
+	"enemies/turret": {
+		"size": Vector2i(24, 24), "anchor": "feet", "color": "8a8aa8", "label": "T", "default": "idle",
+		"anims": {
+			"idle": {"frames": 1, "fps": 1.0, "loop": true, "shape": "turret"},
+			"fire": {"frames": 2, "fps": 10.0, "loop": false, "shape": "turret"},
+		},
+	},
+	"enemies/flyer": {
+		"size": Vector2i(28, 18), "anchor": "center", "color": "3fbfbf", "label": "F", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 8.0, "loop": true, "shape": "wing"}},
+	},
 	# --- Proyectiles (anclaje al centro, animación "fly") ---
 	"projectiles/hairball": {
 		"size": Vector2i(6, 6), "anchor": "center", "color": "c08a5a", "default": "fly",
@@ -44,6 +63,14 @@ const ENTITIES := {
 	"projectiles/sardine": {
 		"size": Vector2i(7, 7), "anchor": "center", "color": "5fa8ff", "default": "fly",
 		"anims": {"fly": {"frames": 2, "fps": 12.0, "loop": true, "shape": "orb"}},
+	},
+	"projectiles/enemy_shot": {
+		"size": Vector2i(5, 5), "anchor": "center", "color": "ff3a3a", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 10.0, "loop": true, "shape": "orb"}},
+	},
+	"projectiles/enemy_bomb": {
+		"size": Vector2i(7, 7), "anchor": "center", "color": "a050ff", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 8.0, "loop": true, "shape": "orb"}},
 	},
 }
 
