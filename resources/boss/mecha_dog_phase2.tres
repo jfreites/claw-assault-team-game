@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BossPhaseData" format=3]
+
+[ext_resource type="Script" path="res://scripts/boss/boss_phase_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/weapons/enemy/boss_fan_p2.tres" id="2_fan"]
+[ext_resource type="Resource" path="res://resources/weapons/enemy/boss_mortar.tres" id="3_mortar"]
+
+[resource]
+script = ExtResource("1_script")
+pattern = PackedStringArray("fan", "mortar", "charge", "mortar")
+idle_time = 0.7
+recover_time = 0.5
+fan_weapon = ExtResource("2_fan")
+fan_volleys = 3
+volley_interval = 0.35
+charge_windup = 0.6
+charge_speed = 250.0
+mortar_weapon = ExtResource("3_mortar")
+mortar_count = 5
+mortar_interval = 0.2
+mortar_flight_time = 0.9
+mortar_spread = 140.0

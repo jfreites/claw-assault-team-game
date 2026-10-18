@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BossPhaseData" format=3]
+
+[ext_resource type="Script" path="res://scripts/boss/boss_phase_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/weapons/enemy/boss_fan_p1.tres" id="2_fan"]
+
+[resource]
+script = ExtResource("1_script")
+pattern = PackedStringArray("fan", "charge", "fan")
+idle_time = 1.2
+recover_time = 0.8
+fan_weapon = ExtResource("2_fan")
+fan_volleys = 2
+volley_interval = 0.5
+charge_windup = 0.9
+charge_speed = 180.0
+mortar_count = 0

@@ -202,6 +202,28 @@ func _draw_shape(img: Image, shape: String, c: Color, f: int, n: int) -> Diction
 			_rect(img, 4, fy + wave, w - 5, 7, c)
 			_rect(img, w - 3, fy + 1 - wave, 2, 5, c.darkened(0.2))
 			return {"body": Rect2i()}
+		"mech":
+			# Perro mecha: cuerpo blindado, cabeza al frente, cañón en el lomo y 4 patas
+			var bw := int(w * 0.62)
+			var bh := int(h * 0.42)
+			var x0 := int(w * 0.12)
+			var y0 := h - 10 - bh
+			var bob := f % 2
+			_rect(img, x0, y0 + bob, bw, bh, c)
+			_rect(img, x0 + 2, y0 + bob + 3, bw - 4, 2, c.darkened(0.3))
+			var hx := x0 + bw - 2
+			_rect(img, hx, y0 - 8 + bob, 16, 14, c.lightened(0.1))
+			_rect(img, hx + 10, y0 + 6 + bob, 8, 4, c.darkened(0.2))
+			_rect(img, hx + 4, y0 - 12 + bob, 4, 5, c)
+			_rect(img, hx + 11, y0 - 4 + bob, 3, 3, Color(1, 0.2, 0.2))
+			_rect(img, x0 + 8, y0 - 10, 8, 10, c.darkened(0.15))
+			_rect(img, x0 + 10, y0 - 16, 4, 7, GUN_COLOR)
+			for i in 4:
+				var lx := x0 + 4 + i * int((bw - 10) / 3.0)
+				var off := 2 if (f + i) % 2 == 0 else 0
+				_rect(img, lx, y0 + bh + bob, 5, 10 - bob - off, c.darkened(0.35))
+			_rect(img, x0 - 8, y0 + 2, 8, 3, c)
+			return {"body": Rect2i(x0, y0 + bob, bw, bh), "gun": Vector2i(hx + 14, y0 + 2)}
 		"pill":
 			# Cápsula de pickup: caja redondeada con brillo que se mueve
 			_rect(img, 1, 0, w - 2, h, c)

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/bullet.tscn" id="2_bullet"]
+
+[resource]
+script = ExtResource("1_script")
+bullet_scene = ExtResource("2_bullet")
+display_name = "Mortero del jefe"
+damage = 1
+bullet_speed = 100.0
+lifetime = 4.0
+sfx = "boss_mortar"
+bullet_sprite = "projectiles/boss_shell"
+hit_radius = 4.0
+rotate_sprite = true
+bullet_gravity = 420.0

@@ -14,6 +14,7 @@ assets/sprites/
       tiles/tileset.png
       backgrounds/far.png, near.png
       enemies/runner/, turret/, flyer/
+      boss/mecha_dog/, weak_point/
 ```
 
 `SpriteLoader` busca cada carpeta o archivo en este orden:
@@ -170,8 +171,23 @@ El borde izquierdo y el derecho deben empalmar para que la repetición no se not
 |---|---|---|---|---|
 | `fx/shield` | 32×32 | center | `idle` (4 @ 10) | Burbuja del escudo de leche, centrada en (0, -13) del jugador |
 
+### Jefe del Nivel 1 — `assets/sprites/levels/level_01/boss/`
+Arte propio del nivel (por eso vive en la carpeta del nivel y no en `assets/sprites/boss/`, que queda para jefes compartidos).
+
+| Entidad | Frame | Anclaje | Animaciones (frames @ fps) |
+|---|---|---|---|
+| `boss/mecha_dog` | 72×52 | feet | `idle` (2 @ 4), `fire` (2 @ 10), `windup` (2 @ 12, aviso de embestida), `charge` (4 @ 14), `mortar` (2 @ 8), `roar` (2 @ 10, intro y cambio de fase), `dying` (2 @ 12) |
+| `boss/weak_point` | 12×14 | center | `open` (2 @ 6, vulnerable), `closed` (1, blindado) |
+
+El cuerpo mira a la derecha como todo el arte; la cabeza va al frente. El punto débil es un sprite aparte dibujado encima, así se puede animar (brillo, apertura) sin tocar al perro. La fase 2 tiñe el sprite con `phase2_tint` de `BossData`.
+
+Hitboxes fijas en `scenes/boss/mecha_dog.tscn`: cuerpo 56×36, armadura 56×40, contacto 50×32, punto débil 12×14 en (30, -22).
+Puntos de disparo: `Muzzle` (34, -30) para el abanico y `MortarMuzzle` (-12, -50) en el lomo. Todo se espeja al mirar a la izquierda.
+
+Proyectil del mortero: `projectiles/boss_shell` (10×6, `fly` 2 @ 10, rota con la trayectoria).
+
 ### Pendientes (etapas siguientes)
-`boss/` y `ui/` se documentarán cuando se construyan esas etapas.
+`ui/` se documentará en la etapa 7.
 
 ## Capas de colisión
 

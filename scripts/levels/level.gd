@@ -4,6 +4,7 @@ extends Node2D
 ## cámara, arena del jefe y flujo de vidas (reaparición en checkpoint / game over).
 
 signal boss_arena_entered
+signal boss_defeated
 
 ## Ficha del nivel (nombre y carpeta de arte); vacío = arte por defecto (campo de pruebas)
 @export var info: LevelInfo
@@ -14,6 +15,10 @@ signal boss_arena_entered
 @export var intro_drop := true
 ## Nombre de la música en assets/audio/music (vacío = sin música)
 @export var music := ""
+## Segundos entre que la cámara se bloquea y el jefe aparece
+@export var boss_awaken_delay := 0.9
+## Al vencer al jefe pasa al siguiente nivel / victoria (las pruebas lo desactivan)
+@export var advance_on_boss_defeat := true
 
 var player: Player
 var level_size := Vector2.ZERO
@@ -175,6 +180,30 @@ func _on_arena_trigger(body: Node2D) -> void:
 	_arena_reached = true
 	camera.lock_at_x(_arena_x + camera.get_view_size().x * 0.5)
 	boss_arena_entered.emit()
+	var boss := get_tree().get_first_node_in_group("boss") as Boss
+	if boss == null:
+		return
+	await get_tree().create_timer(boss_awaken_delay).timeout
+	if not is_instance_valid(boss):
+		return
+	boss.health_changed.connect(hud.set_boss_health)
+	boss.defeated.connect(_on_boss_defeated.bind(boss))
+	hud.show_boss_bar(boss.data.display_name)
+	AudioManager.play_music("boss")
+	boss.awaken(Rect2(_arena_x, 0, camera.get_view_size().x, level_size.y))
+
+
+func _on_boss_defeated(boss: Boss) -> void:
+	boss_defeated.emit()
+	if is_instance_valid(player) and player.is_alive():
+		player.start_invulnerability(999.0)
+	hud.hide_boss_bar()
+	hud.flash_message("¡MISIÓN CUMPLIDA!", boss.data.victory_delay)
+	AudioManager.stop_music()
+	AudioManager.play_sfx("stage_clear")
+	await get_tree().create_timer(boss.data.victory_delay).timeout
+	if advance_on_boss_defeat:
+		LevelManager.complete_current_level()
 
 
 func is_in_boss_arena() -> bool:

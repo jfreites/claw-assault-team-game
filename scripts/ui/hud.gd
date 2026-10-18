@@ -1,13 +1,17 @@
 class_name Hud
 extends CanvasLayer
 ## HUD mínimo (se completa en la etapa 7): vidas, arma, poderes activos con
-## temporizador y mensajes centrales.
+## temporizador, barra del jefe y mensajes centrales.
 
 var _player: Player
 
 @onready var info: Label = $Info
 @onready var power: Label = $Power
 @onready var message: Label = $Message
+@onready var boss_bar: Control = $BossBar
+@onready var boss_name: Label = $BossBar/Name
+@onready var boss_fill: ColorRect = $BossBar/Fill
+@onready var boss_back: ColorRect = $BossBar/Back
 
 
 var _message_time := 0.0
@@ -16,6 +20,7 @@ var _message_time := 0.0
 func _ready() -> void:
 	add_to_group("hud")
 	message.visible = false
+	boss_bar.visible = false
 	power.text = ""
 	GameState.lives_changed.connect(_on_lives_changed)
 	_refresh()
@@ -47,6 +52,20 @@ func show_message(text: String) -> void:
 func flash_message(text: String, seconds: float) -> void:
 	show_message(text)
 	_message_time = seconds
+
+
+func show_boss_bar(display_name: String) -> void:
+	boss_name.text = display_name
+	boss_fill.size.x = boss_back.size.x
+	boss_bar.visible = true
+
+
+func set_boss_health(current: int, max_health: int) -> void:
+	boss_fill.size.x = boss_back.size.x * clampf(float(current) / maxf(max_health, 1), 0.0, 1.0)
+
+
+func hide_boss_bar() -> void:
+	boss_bar.visible = false
 
 
 func _on_lives_changed(_lives: int) -> void:

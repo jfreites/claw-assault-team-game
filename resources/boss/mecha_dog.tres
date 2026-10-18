@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BossData" format=3]
+
+[ext_resource type="Script" path="res://scripts/boss/boss_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/boss/mecha_dog_phase1.tres" id="2_p1"]
+[ext_resource type="Resource" path="res://resources/boss/mecha_dog_phase2.tres" id="3_p2"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "MECHA-DOG"
+max_health = 50
+contact_damage = 1
+phase2_health_ratio = 0.5
+body_half_width = 30.0
+intro_roar_time = 1.0
+phase_change_time = 1.2
+death_time = 2.2
+victory_delay = 2.0
+phase1 = ExtResource("2_p1")
+phase2 = ExtResource("3_p2")
+phase2_tint = Color(1, 0.7, 0.65, 1)

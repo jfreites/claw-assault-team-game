@@ -96,6 +96,28 @@ const ENTITIES := {
 		"size": Vector2i(32, 32), "anchor": "center", "color": "ffe066", "default": "idle",
 		"anims": {"idle": {"frames": 4, "fps": 10.0, "loop": true, "shape": "ring"}},
 	},
+	# --- Jefe del nivel 1 ---
+	"boss/mecha_dog": {
+		"level": "level_01",
+		"size": Vector2i(72, 52), "anchor": "feet", "color": "7f8a99", "label": "MECHA", "default": "idle",
+		"anims": {
+			"idle": {"frames": 2, "fps": 4.0, "loop": true, "shape": "mech"},
+			"fire": {"frames": 2, "fps": 10.0, "loop": true, "shape": "mech", "gun": "fwd"},
+			"windup": {"frames": 2, "fps": 12.0, "loop": true, "shape": "mech", "tint": "ffaa33"},
+			"charge": {"frames": 4, "fps": 14.0, "loop": true, "shape": "mech", "tint": "ffaa33"},
+			"mortar": {"frames": 2, "fps": 8.0, "loop": true, "shape": "mech", "gun": "up"},
+			"roar": {"frames": 2, "fps": 10.0, "loop": true, "shape": "mech", "tint": "ff4040"},
+			"dying": {"frames": 2, "fps": 12.0, "loop": true, "shape": "mech", "tint": "402020"},
+		},
+	},
+	"boss/weak_point": {
+		"level": "level_01",
+		"size": Vector2i(12, 14), "anchor": "center", "color": "ff3366", "default": "open",
+		"anims": {
+			"open": {"frames": 2, "fps": 6.0, "loop": true, "shape": "orb"},
+			"closed": {"frames": 1, "fps": 1.0, "loop": true, "shape": "box", "tint": "50505a"},
+		},
+	},
 	# --- Proyectiles (anclaje al centro, animación "fly") ---
 	"projectiles/hairball": {
 		"size": Vector2i(6, 6), "anchor": "center", "color": "c08a5a", "default": "fly",
@@ -116,6 +138,10 @@ const ENTITIES := {
 	"projectiles/enemy_shot": {
 		"size": Vector2i(5, 5), "anchor": "center", "color": "ff3a3a", "default": "fly",
 		"anims": {"fly": {"frames": 2, "fps": 10.0, "loop": true, "shape": "orb"}},
+	},
+	"projectiles/boss_shell": {
+		"size": Vector2i(10, 6), "anchor": "center", "color": "ffb030", "default": "fly",
+		"anims": {"fly": {"frames": 2, "fps": 10.0, "loop": true, "shape": "bone"}},
 	},
 	"projectiles/enemy_bomb": {
 		"size": Vector2i(7, 7), "anchor": "center", "color": "a050ff", "default": "fly",

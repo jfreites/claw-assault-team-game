@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/bullet.tscn" id="2_bullet"]
+
+[resource]
+script = ExtResource("1_script")
+bullet_scene = ExtResource("2_bullet")
+display_name = "Abanico del jefe (fase 1)"
+pattern = 1
+damage = 1
+bullet_speed = 115.0
+lifetime = 4.0
+sfx = "boss_fan"
+bullet_sprite = "projectiles/enemy_shot"
+hit_radius = 2.0
+rotate_sprite = false
+spread_count = 5
+spread_angle = 50.0
